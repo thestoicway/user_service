@@ -1,21 +1,34 @@
 package api
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
+	customerrors "github.com/thestoicway/backend/custom_errors/custom_errors"
+	"github.com/thestoicway/backend/user_service/internal/model"
 )
 
-func (h *userHandler) SignIn(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	jwt, err := h.service.SignIn(r.Context(), "email", "password")
+func (h *userHandler) SignIn(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
+
+	user := &model.User{}
+
+	err := json.NewDecoder(r.Body).Decode(user)
 
 	if err != nil {
-		h.logger.Errorf("can't sign in: %v", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("can't sign in"))
-		return
+		return err
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(jwt))
+	jwt, err := h.service.SignIn(r.Context(), user)
+
+	if err != nil {
+		return err
+	}
+
+	resp := customerrors.NewSuccessResponse(jwt)
+
+	jsonEncoder := json.NewEncoder(w)
+	jsonEncoder.Encode(resp)
+
+	return nil
 }

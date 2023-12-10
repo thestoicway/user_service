@@ -6,7 +6,8 @@ import (
 )
 
 type UserDatabase interface {
-	GetUserByEmail(email string) (model.User, error)
+	GetUserByEmail(email string) (*model.UserDB, error)
+	InsertUser(user *model.UserDB) error
 }
 
 type userDatabase struct {

@@ -4,12 +4,13 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
+	customerrors "github.com/thestoicway/backend/custom_errors/custom_errors"
 	"github.com/thestoicway/backend/user_service/internal/service"
 	"go.uber.org/zap"
 )
 
 type UserHandler interface {
-	SignIn(w http.ResponseWriter, r *http.Request, ps httprouter.Params)
+	SignIn(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error
 	Register(router *httprouter.Router)
 }
 
@@ -27,5 +28,6 @@ func NewUserHandler(logger *zap.SugaredLogger, service service.UserService) User
 }
 
 func (h *userHandler) Register(router *httprouter.Router) {
-	router.GET("/signin", h.SignIn)
+	router.POST("/signin", customerrors.HandlerWrapper(h.SignIn))
+	router.POST("/signup", customerrors.HandlerWrapper(h.SignUp))
 }

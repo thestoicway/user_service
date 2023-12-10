@@ -1,11 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/thestoicway/backend/user_service/internal/api"
+	"github.com/thestoicway/backend/user_service/internal/config"
 	"github.com/thestoicway/backend/user_service/internal/database"
 	"github.com/thestoicway/backend/user_service/internal/service"
 	"go.uber.org/zap"
@@ -13,6 +15,7 @@ import (
 
 func main() {
 	zap, err := zap.NewProduction()
+	cfg := config.NewConfig()
 
 	if err != nil {
 		log.Fatalf("can't initialize zap logger: %v", err)
@@ -30,6 +33,7 @@ func main() {
 	userService := service.NewUserService(
 		sugar.Named("userService"),
 		db,
+		cfg,
 	)
 
 	userHandler := api.NewUserHandler(
@@ -39,5 +43,10 @@ func main() {
 
 	userHandler.Register(router)
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	server := http.Server{
+		Addr:    fmt.Sprintf(":%d", cfg.ServerConfig.Port),
+		Handler: router,
+	}
+
+	log.Fatal(server.ListenAndServe())
 }

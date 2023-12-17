@@ -4,11 +4,15 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/thestoicway/backend/user_service/internal/api"
 	"github.com/thestoicway/backend/user_service/internal/config"
 	"github.com/thestoicway/backend/user_service/internal/database"
+	jsonwebtoken "github.com/thestoicway/backend/user_service/internal/jwt"
 	"github.com/thestoicway/backend/user_service/internal/service"
 	"go.uber.org/zap"
 )
@@ -26,15 +30,29 @@ func main() {
 
 	router := httprouter.New()
 
-	db := database.NewUserDatabase(
+	db, err := database.NewDB(cfg.PostgresDatabase.PostgresURL)
+
+	if err != nil {
+		sugar.Fatalf("can't initialize database: %v", err)
+	}
+
+	sugar.Info("userDb: ", db)
+
+	userDb := database.NewUserDatabase(
 		sugar.Named("userDatabase"),
+		db,
 	)
 
-	userService := service.NewUserService(
-		sugar.Named("userService"),
-		db,
-		cfg,
-	)
+	jwtManager := jsonwebtoken.NewJwtManager(sugar.Named("jwt_manager"), cfg.JwtSecret)
+
+	userSvcParams := &service.UserServiceParams{
+		Logger:     sugar.Named("userService"),
+		Config:     cfg,
+		Database:   userDb,
+		JwtManager: jwtManager,
+	}
+
+	userService := service.NewUserService(userSvcParams)
 
 	userHandler := api.NewUserHandler(
 		sugar.Named("userHandler"),
@@ -48,5 +66,16 @@ func main() {
 		Handler: router,
 	}
 
-	log.Fatal(server.ListenAndServe())
+	signalsChan := make(chan os.Signal, 1)
+
+	signal.Notify(signalsChan, os.Interrupt, syscall.SIGTERM)
+
+	go func() {
+		log.Printf("starting server on port %d", cfg.ServerConfig.Port)
+		if err := server.ListenAndServe(); err != nil {
+			log.Fatalf("can't start server: %v", err)
+		}
+	}()
+
+	<-signalsChan
 }

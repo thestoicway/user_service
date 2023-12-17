@@ -25,6 +25,7 @@ func HandlerWrapper(handler func(w http.ResponseWriter, r *http.Request, ps http
 			resp := NewInternalServerException(err)
 
 			w.WriteHeader(http.StatusInternalServerError)
+			w.Header().Set("Content-Type", "application/json")
 			jsonEncoder := json.NewEncoder(w)
 			jsonEncoder.Encode(resp)
 			return

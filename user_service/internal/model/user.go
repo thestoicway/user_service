@@ -35,7 +35,7 @@ func (u *User) Validate() error {
 }
 
 type UserDB struct {
+	ID           int
 	Email        string
-	Name         string
 	PasswordHash string
 }

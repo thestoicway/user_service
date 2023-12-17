@@ -1,0 +1,6 @@
+services:
+  user_service:
+    container_name: "User Service"
+    build: ./user-service.Dockerfile
+    ports:
+      - "8080:8080"

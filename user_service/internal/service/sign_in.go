@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	customerrors "github.com/thestoicway/backend/custom_errors/custom_errors"
-	jsonwebtoken "github.com/thestoicway/backend/user_service/internal/jwt"
+	"github.com/thestoicway/backend/user_service/internal/jsonwebtoken"
 	"github.com/thestoicway/backend/user_service/internal/model"
 	"golang.org/x/crypto/bcrypt"
 )

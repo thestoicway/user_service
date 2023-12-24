@@ -12,7 +12,7 @@ import (
 	"github.com/thestoicway/backend/user_service/internal/api"
 	"github.com/thestoicway/backend/user_service/internal/config"
 	"github.com/thestoicway/backend/user_service/internal/database"
-	jsonwebtoken "github.com/thestoicway/backend/user_service/internal/jwt"
+	"github.com/thestoicway/backend/user_service/internal/jsonwebtoken"
 	"github.com/thestoicway/backend/user_service/internal/service"
 	"go.uber.org/zap"
 )

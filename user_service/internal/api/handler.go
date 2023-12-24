@@ -11,6 +11,9 @@ import (
 
 type UserHandler interface {
 	SignIn(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error
+	SignUp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error
+	Refresh(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error
+	SignOut(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error
 	Register(router *httprouter.Router)
 }
 
@@ -30,4 +33,6 @@ func NewUserHandler(logger *zap.SugaredLogger, service service.UserService) User
 func (h *userHandler) Register(router *httprouter.Router) {
 	router.POST("/signin", customerrors.HandlerWrapper(h.SignIn))
 	router.POST("/signup", customerrors.HandlerWrapper(h.SignUp))
+	router.POST("/refresh", customerrors.HandlerWrapper(h.Refresh))
+	router.DELETE("/signout", customerrors.HandlerWrapper(h.SignOut))
 }

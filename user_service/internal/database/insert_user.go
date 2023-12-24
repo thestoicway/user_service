@@ -4,43 +4,26 @@ import (
 	"context"
 	"errors"
 
-	sq "github.com/Masterminds/squirrel"
-	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/google/uuid"
 	customerrors "github.com/thestoicway/backend/custom_errors/custom_errors"
 	"github.com/thestoicway/backend/user_service/internal/model"
+	"gorm.io/gorm"
 )
 
-func (db *userDatabase) InsertUser(ctx context.Context, user *model.UserDB) (userID int, err error) {
-	pool := db.db.DbPool
+func (db *userDatabase) InsertUser(ctx context.Context, user *model.UserDB) (userID uuid.UUID, err error) {
+	gormDb := db.db
 
-	query, args, err := sq.Insert("users").
-		Columns("email", "password").
-		Values(user.Email, user.PasswordHash).
-		Suffix("RETURNING \"user_id\"").
-		PlaceholderFormat(sq.Dollar).
-		ToSql()
+	res := gormDb.Create(user)
+
+	err = res.Error
 
 	if err != nil {
-		return 0, err
-	}
-
-	row := pool.QueryRow(ctx, query, args...)
-
-	err = row.Scan(&userID)
-
-	if err != nil {
-		var pgErr *pgconn.PgError
-
-		if errors.As(err, &pgErr) {
-
-			// if unique constraint violation
-			if pgErr.Code == "23505" {
-				return 0, customerrors.NewDuplicateEmailError()
-			}
+		if errors.Is(err, gorm.ErrDuplicatedKey) {
+			return uuid.UUID{}, customerrors.NewDuplicateEmailError()
 		}
 
-		return 0, err
+		return uuid.UUID{}, err
 	}
 
-	return userID, nil
+	return user.ID, nil
 }

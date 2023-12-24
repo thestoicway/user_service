@@ -11,7 +11,7 @@ import (
 )
 
 func (svc *userService) SignIn(ctx context.Context, user *model.User) (tokenPair *jsonwebtoken.TokenPair, err error) {
-	userDb, err := svc.database.GetUserByEmail(ctx, user.Email)
+	userDb, err := svc.Database.GetUserByEmail(ctx, user.Email)
 
 	if err != nil {
 		return nil, err
@@ -23,7 +23,7 @@ func (svc *userService) SignIn(ctx context.Context, user *model.User) (tokenPair
 		return nil, customerrors.NewWrongCredentialsError()
 	}
 
-	pair, err := svc.jwtManager.GenerateTokenPair(userDb.ID)
+	pair, err := svc.JwtManager.GenerateTokenPair(userDb.ID)
 
 	if err != nil {
 		return nil, fmt.Errorf("can't sign token: %v", err)

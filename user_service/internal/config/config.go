@@ -17,7 +17,11 @@ type ServerConfig struct {
 }
 
 type PostgresDatabase struct {
-	PostgresURL string `env:"POSTGRES_URL" env-required:"true"`
+	PostgresPort int    `env:"POSTGRES_PORT" env-default:"5432"`
+	PostgresHost string `env:"POSTGRES_HOST" env-default:"localhost"`
+	PostgresUser string `env:"POSTGRES_USER" env-default:"postgres"`
+	PostgresPass string `env:"POSTGRES_PASS" env-default:"postgres"`
+	PostgresDB   string `env:"POSTGRES_DB" env-default:"postgres"`
 }
 
 // NewConfig returns a new Config struct from ENV variables

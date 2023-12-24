@@ -28,15 +28,11 @@ func main() {
 	sugar := zap.Sugar()
 	defer sugar.Sync()
 
-	router := httprouter.New()
-
-	db, err := database.NewDB(cfg.PostgresDatabase.PostgresURL)
+	db, err := database.OpenDB(cfg)
 
 	if err != nil {
-		sugar.Fatalf("can't initialize database: %v", err)
+		sugar.Fatalf("can't open database: %v", err)
 	}
-
-	sugar.Info("userDb: ", db)
 
 	userDb := database.NewUserDatabase(
 		sugar.Named("userDatabase"),
@@ -58,6 +54,8 @@ func main() {
 		sugar.Named("userHandler"),
 		userService,
 	)
+
+	router := httprouter.New()
 
 	userHandler.Register(router)
 

@@ -5,7 +5,7 @@ FROM golang:1.21.4 as builder
 WORKDIR /app
 
 # Copy the go.work file if you are using workspace mode in Go
-COPY go.work .
+COPY go.work go.work.sum ./
 
 # Copy the entire user_service directory
 COPY ./user_service ./user_service

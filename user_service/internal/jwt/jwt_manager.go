@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	"go.uber.org/zap"
 )
 
@@ -13,7 +14,7 @@ type TokenPair struct {
 }
 
 type JwtManager interface {
-	GenerateTokenPair(id int) (tokenPair *TokenPair, err error)
+	GenerateTokenPair(uuid uuid.UUID) (tokenPair *TokenPair, err error)
 }
 
 type jwtManager struct {
@@ -21,9 +22,10 @@ type jwtManager struct {
 	secret string
 }
 
-func (manager *jwtManager) GenerateTokenPair(id int) (tokenPair *TokenPair, err error) {
-
+func (manager *jwtManager) GenerateTokenPair(uuid uuid.UUID) (tokenPair *TokenPair, err error) {
 	iat := time.Now()
+
+	id := uuid.String()
 
 	// Creates access and refresh tokens with claims
 	aToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{

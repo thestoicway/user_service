@@ -2,33 +2,27 @@ package database
 
 import (
 	"context"
+	"errors"
 
-	sq "github.com/Masterminds/squirrel"
+	customerrors "github.com/thestoicway/backend/custom_errors/custom_errors"
 	"github.com/thestoicway/backend/user_service/internal/model"
+	"gorm.io/gorm"
 )
 
 func (db *userDatabase) GetUserByEmail(context context.Context, email string) (*model.UserDB, error) {
-	pool := db.db.DbPool
+	gormDb := db.db
 
-	user := &model.UserDB{}
+	var user model.UserDB
 
-	query, args, err := sq.Select("user_id", "email", "password").
-		From("users").
-		Where(sq.Eq{"email": email}).
-		PlaceholderFormat(sq.Dollar).
-		ToSql()
+	err := gormDb.Where("email = ?", email).First(&user).Error
 
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, customerrors.NewWrongCredentialsError()
+		}
+
 		return nil, err
 	}
 
-	row := pool.QueryRow(context, query, args...)
-
-	err = row.Scan(&user.ID, &user.Email, &user.PasswordHash)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return user, nil
+	return &user, nil
 }

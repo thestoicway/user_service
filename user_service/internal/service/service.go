@@ -16,10 +16,7 @@ type UserService interface {
 }
 
 type userService struct {
-	logger     *zap.SugaredLogger
-	config     *config.Config
-	database   database.UserDatabase
-	jwtManager jsonwebtoken.JwtManager
+	*UserServiceParams
 }
 
 type UserServiceParams struct {
@@ -31,9 +28,6 @@ type UserServiceParams struct {
 
 func NewUserService(p *UserServiceParams) UserService {
 	return &userService{
-		logger:     p.Logger,
-		database:   p.Database,
-		config:     p.Config,
-		jwtManager: p.JwtManager,
+		UserServiceParams: p,
 	}
 }

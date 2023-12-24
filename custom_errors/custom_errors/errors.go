@@ -49,7 +49,7 @@ func NewWrongCredentialsError() error {
 	return &CustomError{
 		Code:       ErrWrongCredentials,
 		Message:    "Wrong credentials, either email or password is wrong",
-		StatusCode: 401,
+		StatusCode: 400,
 	}
 }
 

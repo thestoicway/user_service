@@ -21,13 +21,13 @@ func (s *userService) SignUp(ctx context.Context, user *model.User) (tokenPair *
 		PasswordHash: string(passwordHash),
 	}
 
-	id, err := s.database.InsertUser(ctx, userDB)
+	id, err := s.Database.InsertUser(ctx, userDB)
 
 	if err != nil {
 		return nil, err
 	}
 
-	pair, err := s.jwtManager.GenerateTokenPair(id)
+	pair, err := s.JwtManager.GenerateTokenPair(id)
 
 	if err != nil {
 		return nil, err

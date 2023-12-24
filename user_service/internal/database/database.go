@@ -47,21 +47,5 @@ func OpenDB(config *config.Config) (*gorm.DB, error) {
 		return nil, err
 	}
 
-	if err := migrate(db); err != nil {
-		return nil, err
-	}
-
 	return db, err
-}
-
-func migrate(db *gorm.DB) error {
-
-	// Create "users" table
-	err := db.Migrator().CreateTable(&model.UserDB{})
-
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

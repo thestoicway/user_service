@@ -38,8 +38,8 @@ func (u *User) Validate() error {
 
 type UserDB struct {
 	ID           uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
-	Email        string
-	PasswordHash string
+	Email        string    `gorm:"unique;not null"`
+	PasswordHash string    `gorm:"not null"`
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 	DeletedAt    gorm.DeletedAt `gorm:"index"`

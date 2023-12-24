@@ -11,8 +11,8 @@ services:
     env_file:
       - ./dockerfiles/user_service/.env
     depends_on:
-      user_service_postgres:
-        condition: service_healthy
+      user_service_postgres_migrate:
+        condition: service_completed_successfully
     networks:
       - user_service_network
 
@@ -34,6 +34,19 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - user_service_network
+
+  user_service_postgres_migrate:
+    image: arigaio/atlas:latest
+    command: >
+      migrate apply
+      --url postgres://postgres:postgres@user_service_postgres:5432/user_service?sslmode=disable
+    networks:
+      - user_service_network
+    depends_on:
+      user_service_postgres:
+        condition: service_healthy
+    volumes:
+      - ./user_service/migrations/:/migrations
 
 volumes:
   postgres_data:

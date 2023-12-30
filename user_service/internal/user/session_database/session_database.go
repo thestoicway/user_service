@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/redis/go-redis/v9"
+	customerrors "github.com/thestoicway/backend/custom_errors/custom_errors"
 	"github.com/thestoicway/backend/user_service/internal/user/model"
 	"go.uber.org/zap"
 )
@@ -48,6 +49,11 @@ func (s *redisDatabase) GetSession(ctx context.Context, jwtID string) (session *
 
 	if err != nil {
 		s.logger.Errorw("failed to get session from redis", "error", err)
+
+		if err == redis.Nil {
+			return nil, customerrors.NewUnauthorizedError("invalid session")
+		}
+
 		return nil, err
 	}
 
@@ -65,6 +71,11 @@ func (s *redisDatabase) DeleteSession(ctx context.Context, jwtID string) (err er
 
 	if err != nil {
 		s.logger.Errorw("failed to delete session from redis", "error", err)
+
+		if err == redis.Nil {
+			return customerrors.NewUnauthorizedError("invalid session")
+		}
+
 		return err
 	}
 
@@ -82,9 +93,16 @@ func (s *redisDatabase) ReplaceSession(ctx context.Context, oldSession *model.Se
 
 	// Execute the transaction
 	_, err = txPipeline.Exec(ctx)
+
 	if err != nil {
-		s.logger.Errorw("failed to execute transaction in redis", "error", err)
+		s.logger.Errorw("failed to replace session in redis", "error", err)
+
+		if err == redis.Nil {
+			return customerrors.NewUnauthorizedError("invalid session")
+		}
+
 		return err
+
 	}
 
 	return nil

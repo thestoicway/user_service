@@ -4,12 +4,12 @@ services:
   user_service:
     container_name: "user_service"
     build:
-      context: .
-      dockerfile: ./dockerfiles/user_service/Dockerfile
+      context: ../../
+      dockerfile: ./docker/user_service/Dockerfile
     ports:
       - "8080:8080"
     env_file:
-      - ./dockerfiles/user_service/.env
+      - .env
     depends_on:
       user_service_postgres_migrate:
         condition: service_completed_successfully

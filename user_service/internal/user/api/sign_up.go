@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-	customerrors "github.com/thestoicway/backend/custom_errors/custom_errors"
-	"github.com/thestoicway/backend/user_service/internal/model"
+	customerrors "github.com/thestoicway/backend/custom_errors"
+	"github.com/thestoicway/backend/user_service/internal/user/model"
 )
 
 func (h *userHandler) SignUp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
@@ -36,6 +36,7 @@ func (h *userHandler) SignUp(w http.ResponseWriter, r *http.Request, ps httprout
 	// Make status code 201
 	w.WriteHeader(http.StatusCreated)
 
+	w.Header().Set("Content-Type", "application/json")
 	// Write response body
 	jsonEncoder.Encode(resp)
 	return nil

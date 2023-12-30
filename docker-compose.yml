@@ -13,6 +13,8 @@ services:
     depends_on:
       user_service_postgres_migrate:
         condition: service_completed_successfully
+      user_service_redis:
+        condition: service_healthy
     networks:
       - user_service_network
 
@@ -47,6 +49,19 @@ services:
         condition: service_healthy
     volumes:
       - ./user_service/migrations/:/migrations
+
+  user_service_redis:
+    container_name: "user_service_redis"
+    image: "redis:latest"
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "6379:6379"
+    networks:
+      - user_service_network
 
 volumes:
   postgres_data:

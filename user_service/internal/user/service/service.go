@@ -4,9 +4,10 @@ import (
 	"context"
 
 	"github.com/thestoicway/backend/user_service/internal/config"
-	"github.com/thestoicway/backend/user_service/internal/database"
 	"github.com/thestoicway/backend/user_service/internal/jsonwebtoken"
-	"github.com/thestoicway/backend/user_service/internal/model"
+	"github.com/thestoicway/backend/user_service/internal/user/database"
+	"github.com/thestoicway/backend/user_service/internal/user/model"
+	sessiondatabase "github.com/thestoicway/backend/user_service/internal/user/session_database"
 	"go.uber.org/zap"
 )
 
@@ -25,6 +26,7 @@ type UserServiceParams struct {
 	Config     *config.Config
 	Database   database.UserDatabase
 	JwtManager jsonwebtoken.JwtManager
+	Session    sessiondatabase.SessionDatabase
 }
 
 func NewUserService(p *UserServiceParams) UserService {

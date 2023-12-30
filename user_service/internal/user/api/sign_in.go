@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-	customerrors "github.com/thestoicway/backend/custom_errors/custom_errors"
-	"github.com/thestoicway/backend/user_service/internal/model"
+	customerrors "github.com/thestoicway/backend/custom_errors"
+	"github.com/thestoicway/backend/user_service/internal/user/model"
 )
 
 func (h *userHandler) SignIn(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
@@ -33,6 +33,8 @@ func (h *userHandler) SignIn(w http.ResponseWriter, r *http.Request, ps httprout
 	resp := customerrors.NewSuccessResponse(jwt)
 
 	jsonEncoder := json.NewEncoder(w)
+
+	w.Header().Set("Content-Type", "application/json")
 	jsonEncoder.Encode(resp)
 
 	return nil

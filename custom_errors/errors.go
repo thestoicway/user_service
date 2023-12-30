@@ -1,5 +1,7 @@
 package customerrors
 
+import "net/http"
+
 const (
 	// ErrUnknown is an unknown error.
 	// This should be used only as a fallback error when something unexpected happens.
@@ -33,8 +35,6 @@ type CustomError struct {
 	// then the client application can display a message like
 	// "Wrong credentials, either email or password is wrong".
 	Code int
-	// StatusCode is the HTTP status code that should be returned to the client.
-	StatusCode int
 	// Message is a human-readable description of the error.
 	// Included mainly for debugging purposes and a clarification of the error.
 	Message string
@@ -46,13 +46,28 @@ func (e *CustomError) Error() string {
 	return e.Message
 }
 
+// StatusCode returns the HTTP status code for the error.
+func (e *CustomError) StatusCode() int {
+	switch e.Code {
+	case ErrWrongInput:
+		return http.StatusBadRequest
+	case ErrWrongCredentials:
+		return http.StatusUnauthorized
+	case ErrDuplicateEmail:
+		return http.StatusConflict
+	case ErrUnauthorized:
+		return http.StatusForbidden
+	default:
+		return http.StatusInternalServerError
+	}
+}
+
 // NewWrongCredentialsError returns a new error with the given message.
 // This error should be used when the user provides wrong credentials.
 func NewWrongCredentialsError() error {
 	return &CustomError{
-		Code:       ErrWrongCredentials,
-		Message:    "Wrong credentials, either email or password is wrong",
-		StatusCode: 400,
+		Code:    ErrWrongCredentials,
+		Message: "Wrong credentials, either email or password is wrong",
 	}
 }
 
@@ -60,9 +75,8 @@ func NewWrongCredentialsError() error {
 // This error should be used when wrong input is provided.
 func NewWrongInputError(message string) error {
 	return &CustomError{
-		Code:       ErrWrongInput,
-		Message:    message,
-		StatusCode: 400,
+		Code:    ErrWrongInput,
+		Message: message,
 	}
 }
 
@@ -70,9 +84,8 @@ func NewWrongInputError(message string) error {
 // when the user tries to register with an email that is already in the system.
 func NewDuplicateEmailError() error {
 	return &CustomError{
-		Code:       ErrDuplicateEmail,
-		Message:    "Email already exists",
-		StatusCode: 400,
+		Code:    ErrDuplicateEmail,
+		Message: "Email already exists",
 	}
 }
 
@@ -80,8 +93,7 @@ func NewDuplicateEmailError() error {
 // when the user is not authorized to perform the operation.
 func NewUnauthorizedError(message string) error {
 	return &CustomError{
-		Code:       ErrUnauthorized,
-		Message:    message,
-		StatusCode: 401,
+		Code:    ErrUnauthorized,
+		Message: message,
 	}
 }

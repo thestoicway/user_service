@@ -1,10 +1,29 @@
 package database
 
-import "github.com/thestoicway/backend/user_service/internal/model"
+import (
+	"context"
+	"errors"
 
-func (db *userDatabase) InsertUser(user *model.UserDB) error {
-	db.logger.Infof("Inserting user: %v", user)
+	"github.com/google/uuid"
+	customerrors "github.com/thestoicway/backend/custom_errors/custom_errors"
+	"github.com/thestoicway/backend/user_service/internal/model"
+	"gorm.io/gorm"
+)
 
-	// TODO: implement this method
-	return nil
+func (db *userDatabase) InsertUser(ctx context.Context, user *model.UserDB) (userID uuid.UUID, err error) {
+	gormDb := db.db
+
+	res := gormDb.Create(user)
+
+	err = res.Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrDuplicatedKey) {
+			return uuid.UUID{}, customerrors.NewDuplicateEmailError()
+		}
+
+		return uuid.UUID{}, err
+	}
+
+	return user.ID, nil
 }

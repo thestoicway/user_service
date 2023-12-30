@@ -2,14 +2,16 @@ package model
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
 	customerrors "github.com/thestoicway/backend/custom_errors/custom_errors"
+	"gorm.io/gorm"
 )
 
 type User struct {
 	Email    string `json:"email"    validate:"required"`
-	Name     string `json:"name"`
 	Password string `json:"password" validate:"required"`
 }
 
@@ -35,7 +37,14 @@ func (u *User) Validate() error {
 }
 
 type UserDB struct {
-	Email        string
-	Name         string
-	PasswordHash string
+	ID           uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
+	Email        string    `gorm:"unique;not null"`
+	PasswordHash string    `gorm:"not null"`
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+	DeletedAt    gorm.DeletedAt `gorm:"index"`
+}
+
+func (UserDB) TableName() string {
+	return "users"
 }

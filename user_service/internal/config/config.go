@@ -2,49 +2,35 @@ package config
 
 import (
 	"log"
-	"os"
-	"strconv"
+
+	"github.com/ilyakaznacheev/cleanenv"
 )
 
 type Config struct {
-	JwtSecret    string
-	ServerConfig ServerConfig
+	JwtSecret        string `env:"JWT_SECRET" env-required:"true"`
+	ServerConfig     ServerConfig
+	PostgresDatabase PostgresDatabase
 }
 
 type ServerConfig struct {
-	Port int
+	Port int `env:"PORT" env-default:"8080"`
+}
+
+type PostgresDatabase struct {
+	PostgresPort int    `env:"POSTGRES_PORT" env-default:"5432"`
+	PostgresHost string `env:"POSTGRES_HOST" env-default:"localhost"`
+	PostgresUser string `env:"POSTGRES_USER" env-default:"postgres"`
+	PostgresPass string `env:"POSTGRES_PASS" env-default:"postgres"`
+	PostgresDB   string `env:"POSTGRES_DB" env-default:"postgres"`
 }
 
 // NewConfig returns a new Config struct from ENV variables
 func NewConfig() *Config {
-	jwtSecret := os.Getenv("JWT_SECRET")
+	cfg := &Config{}
 
-	if jwtSecret == "" {
-		log.Fatal("JWT_SECRET must be set")
+	if err := cleanenv.ReadEnv(cfg); err != nil {
+		log.Fatalf("can't read config: %v", err)
 	}
 
-	serverConfig := newServerConfig()
-
-	return &Config{
-		JwtSecret:    jwtSecret,
-		ServerConfig: serverConfig,
-	}
-}
-
-func newServerConfig() ServerConfig {
-	port := os.Getenv("PORT")
-
-	if port == "" {
-		port = "8080"
-	}
-
-	intPort, err := strconv.Atoi(port)
-
-	if err != nil {
-		log.Fatalf("can't convert port to int: %v", err)
-	}
-
-	return ServerConfig{
-		Port: intPort,
-	}
+	return cfg
 }

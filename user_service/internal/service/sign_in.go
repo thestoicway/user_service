@@ -4,32 +4,30 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/golang-jwt/jwt/v5"
 	customerrors "github.com/thestoicway/backend/custom_errors/custom_errors"
+	"github.com/thestoicway/backend/user_service/internal/jsonwebtoken"
 	"github.com/thestoicway/backend/user_service/internal/model"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (svc *userService) SignIn(ctx context.Context, user *model.User) (string, error) {
-	userDb, err := svc.database.GetUserByEmail(user.Email)
+func (svc *userService) SignIn(ctx context.Context, user *model.User) (tokenPair *jsonwebtoken.TokenPair, err error) {
+	userDb, err := svc.Database.GetUserByEmail(ctx, user.Email)
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(userDb.PasswordHash), []byte(user.Password))
 
 	if err != nil {
-		return "", customerrors.NewWrongCredentialsError()
+		return nil, customerrors.NewWrongCredentialsError()
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{})
-
-	tokenString, err := token.SignedString([]byte(svc.config.JwtSecret))
+	pair, err := svc.JwtManager.GenerateTokenPair(userDb.ID)
 
 	if err != nil {
-		return "", fmt.Errorf("can't sign token: %v", err)
+		return nil, fmt.Errorf("can't sign token: %v", err)
 	}
 
-	return tokenString, nil
+	return pair, nil
 }

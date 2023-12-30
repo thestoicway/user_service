@@ -23,11 +23,20 @@ func (h *userHandler) SignUp(w http.ResponseWriter, r *http.Request, ps httprout
 		return err
 	}
 
-	if err := h.service.SignUp(r.Context(), user); err != nil {
+	pair, err := h.service.SignUp(r.Context(), user)
+
+	if err != nil {
 		return err
 	}
 
+	resp := customerrors.NewSuccessResponse(pair)
+
+	jsonEncoder := json.NewEncoder(w)
+
 	// Make status code 201
 	w.WriteHeader(http.StatusCreated)
+
+	// Write response body
+	jsonEncoder.Encode(resp)
 	return nil
 }

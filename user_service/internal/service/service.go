@@ -5,25 +5,30 @@ import (
 
 	"github.com/thestoicway/backend/user_service/internal/config"
 	"github.com/thestoicway/backend/user_service/internal/database"
+	"github.com/thestoicway/backend/user_service/internal/jsonwebtoken"
 	"github.com/thestoicway/backend/user_service/internal/model"
 	"go.uber.org/zap"
 )
 
 type UserService interface {
-	SignIn(ctx context.Context, user *model.User) (string, error)
-	SignUp(ctx context.Context, user *model.User) error
+	SignIn(ctx context.Context, user *model.User) (tokenPair *jsonwebtoken.TokenPair, err error)
+	SignUp(ctx context.Context, user *model.User) (tokenPair *jsonwebtoken.TokenPair, err error)
+	Refresh(ctx context.Context, refreshToken string) (tokenPair *jsonwebtoken.TokenPair, err error)
 }
 
 type userService struct {
-	logger   *zap.SugaredLogger
-	config   *config.Config
-	database database.UserDatabase
+	*UserServiceParams
 }
 
-func NewUserService(logger *zap.SugaredLogger, database database.UserDatabase, config *config.Config) UserService {
+type UserServiceParams struct {
+	Logger     *zap.SugaredLogger
+	Config     *config.Config
+	Database   database.UserDatabase
+	JwtManager jsonwebtoken.JwtManager
+}
+
+func NewUserService(p *UserServiceParams) UserService {
 	return &userService{
-		logger:   logger,
-		database: database,
-		config:   config,
+		UserServiceParams: p,
 	}
 }

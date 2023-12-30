@@ -11,6 +11,12 @@ const (
 	// ErrWrongCredentials is returned when the user provides wrong credentials.
 	// For example, if the user provides wrong email or password during login
 	ErrWrongCredentials
+	// ErrDuplicateEmail is returned when the user tries
+	// to register with an email that is already in the system.
+	ErrDuplicateEmail
+	// ErrUnauthorized is returned when the user is not authorized to perform the operation.
+	// For example, if the user tries to access a resource that is not his.
+	ErrUnauthorized
 )
 
 // CustomError represents a custom error.
@@ -46,7 +52,7 @@ func NewWrongCredentialsError() error {
 	return &CustomError{
 		Code:       ErrWrongCredentials,
 		Message:    "Wrong credentials, either email or password is wrong",
-		StatusCode: 401,
+		StatusCode: 400,
 	}
 }
 
@@ -57,5 +63,25 @@ func NewWrongInputError(message string) error {
 		Code:       ErrWrongInput,
 		Message:    message,
 		StatusCode: 400,
+	}
+}
+
+// NewDuplicateEmailError returns an error that should be used
+// when the user tries to register with an email that is already in the system.
+func NewDuplicateEmailError() error {
+	return &CustomError{
+		Code:       ErrDuplicateEmail,
+		Message:    "Email already exists",
+		StatusCode: 400,
+	}
+}
+
+// NewUnauthorizedError returns an error that should be used
+// when the user is not authorized to perform the operation.
+func NewUnauthorizedError(message string) error {
+	return &CustomError{
+		Code:       ErrUnauthorized,
+		Message:    message,
+		StatusCode: 401,
 	}
 }

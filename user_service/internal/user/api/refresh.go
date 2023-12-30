@@ -26,6 +26,7 @@ func (h *userHandler) Refresh(w http.ResponseWriter, r *http.Request, ps httprou
 
 	// write token pair to response
 	jsonEncoder := json.NewEncoder(w)
+	w.Header().Set("Content-Type", "application/json")
 	jsonEncoder.Encode(customerrors.NewSuccessResponse(newPair))
 
 	return nil

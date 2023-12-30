@@ -36,6 +36,7 @@ func (h *userHandler) SignUp(w http.ResponseWriter, r *http.Request, ps httprout
 	// Make status code 201
 	w.WriteHeader(http.StatusCreated)
 
+	w.Header().Set("Content-Type", "application/json")
 	// Write response body
 	jsonEncoder.Encode(resp)
 	return nil

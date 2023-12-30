@@ -33,6 +33,8 @@ func (h *userHandler) SignIn(w http.ResponseWriter, r *http.Request, ps httprout
 	resp := customerrors.NewSuccessResponse(jwt)
 
 	jsonEncoder := json.NewEncoder(w)
+
+	w.Header().Set("Content-Type", "application/json")
 	jsonEncoder.Encode(resp)
 
 	return nil

@@ -49,9 +49,7 @@ func main() {
 		DB:       cfg.RedisConfig.RedisDB,
 	})
 
-	kv := sessiondatabase.NewRedisDatabase(redisClient, sugar.Named("redisDatabase"))
-
-	session := sessiondatabase.NewSessionDatabase(sugar.Named("sessionDatabase"), kv)
+	session := sessiondatabase.NewRedisDatabase(sugar.Named("sessionDatabase"), redisClient)
 
 	userSvcParams := &service.UserServiceParams{
 		Logger:     sugar.Named("userService"),

@@ -1,57 +1,62 @@
 package service
 
 import (
-	"context"
+    "context"
 
-	"github.com/google/uuid"
-	"github.com/thestoicway/backend/user_service/internal/jsonwebtoken"
-	"github.com/thestoicway/backend/user_service/internal/user/model"
+    "github.com/google/uuid"
+    "github.com/thestoicway/backend/user_service/internal/jsonwebtoken"
+    "github.com/thestoicway/backend/user_service/internal/user/model"
 )
 
+// Refresh is a method of userService that takes a context and a refresh token,
+// and returns a new pair of access and refresh tokens.
 func (s *userService) Refresh(ctx context.Context, refreshToken string) (tokenPair *jsonwebtoken.TokenPair, err error) {
-	claims, err := s.JwtManager.DecodeToken(refreshToken)
+    // Decode the refresh token to get the claims
+    claims, err := s.JwtManager.DecodeToken(refreshToken)
 
-	if err != nil {
-		return nil, err
-	}
+    if err != nil {
+        // If there's an error decoding the token, return the error
+        return nil, err
+    }
 
-	uuid, err := uuid.Parse(claims.UserID)
+    // Parse the user ID from the claims
+    uuid, err := uuid.Parse(claims.UserID)
 
-	if err != nil {
-		return nil, err
-	}
+    if err != nil {
+        // If there's an error parsing the user ID, return the error
+        return nil, err
+    }
 
-	currentSession, err := s.Session.GetSession(ctx, claims.ID)
+    // Get the current session using the ID from the claims
+    currentSession, err := s.Session.GetSession(ctx, claims.ID)
 
-	if err != nil {
-		return nil, err
-	}
+    if err != nil {
+        // If there's an error getting the session, return the error
+        return nil, err
+    }
 
-	pair, info, err := s.JwtManager.GenerateTokenPair(uuid)
+    // Generate a new pair of access and refresh tokens
+    pair, info, err := s.JwtManager.GenerateTokenPair(uuid)
 
-	if err != nil {
-		return nil, err
-	}
+    if err != nil {
+        // If there's an error generating the token pair, return the error
+        return nil, err
+    }
 
-	// Delete the previous session of the user.
-	// So that the refresh token can't be used anymore.
-	err = s.Session.DeleteSession(ctx, currentSession.JwtID)
+    // Replace the old session with a new one that includes the new refresh token
+    err = s.Session.ReplaceSession(ctx,
+        currentSession.JwtID,
+        &model.Session{
+            JwtID:          info.RefreshTokenID,
+            RefreshToken:   pair.RefreshToken,
+            ExpirationTime: info.RefreshExpirationTime,
+        })
 
-	if err != nil {
-		return nil, err
-	}
+    if err != nil {
+        // If there's an error replacing the session, return the error
+        return nil, err
+    }
 
-	// Creates a session in Redis where the key is ID of the
-	// refresh token and the value is the refresh token itself.
-	err = s.Session.AddSession(ctx, &model.Session{
-		JwtID:          info.RefreshTokenID,
-		RefreshToken:   pair.RefreshToken,
-		ExpirationTime: info.RefreshExpirationTime,
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	return pair, nil
+    // Return the new pair of tokens
+    return pair, nil
 }

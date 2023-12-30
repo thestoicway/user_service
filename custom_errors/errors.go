@@ -2,23 +2,30 @@ package customerrors
 
 import "net/http"
 
+type ErrorCode = int
+
+// Non-categorized errors (1-1000)
 const (
 	// ErrUnknown is an unknown error.
 	// This should be used only as a fallback error when something unexpected happens.
 	// For example, if the error is not handled in the application, like 500 Internal Server Error.
-	ErrUnknown = iota + 1
+	ErrUnknown ErrorCode = 1
 	// ErrWrongInput is returned when wrong input is provided.
 	// For example, if body of the request is not valid JSON or required fields are missing.
-	ErrWrongInput
+	ErrWrongInput ErrorCode = 2
+)
+
+// User-related errors (1001-2000)
+const (
 	// ErrWrongCredentials is returned when the user provides wrong credentials.
 	// For example, if the user provides wrong email or password during login
-	ErrWrongCredentials
+	ErrWrongCredentials ErrorCode = 1001
 	// ErrDuplicateEmail is returned when the user tries
 	// to register with an email that is already in the system.
-	ErrDuplicateEmail
+	ErrDuplicateEmail ErrorCode = 1002
 	// ErrUnauthorized is returned when the user is not authorized to perform the operation.
 	// For example, if the user tries to access a resource that is not his.
-	ErrUnauthorized
+	ErrUnauthorized ErrorCode = 1003
 )
 
 // CustomError represents a custom error.

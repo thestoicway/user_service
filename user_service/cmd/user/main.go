@@ -9,11 +9,13 @@ import (
 	"syscall"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/thestoicway/backend/user_service/internal/api"
+	"github.com/redis/go-redis/v9"
 	"github.com/thestoicway/backend/user_service/internal/config"
-	"github.com/thestoicway/backend/user_service/internal/database"
 	"github.com/thestoicway/backend/user_service/internal/jsonwebtoken"
-	"github.com/thestoicway/backend/user_service/internal/service"
+	"github.com/thestoicway/backend/user_service/internal/user/api"
+	"github.com/thestoicway/backend/user_service/internal/user/database"
+	"github.com/thestoicway/backend/user_service/internal/user/service"
+	sessiondatabase "github.com/thestoicway/backend/user_service/internal/user/session_database"
 	"go.uber.org/zap"
 )
 
@@ -41,11 +43,22 @@ func main() {
 
 	jwtManager := jsonwebtoken.NewJwtManager(sugar.Named("jwt_manager"), cfg.JwtSecret)
 
+	redisClient := redis.NewClient(&redis.Options{
+		Addr:     fmt.Sprintf("%s:%d", cfg.RedisConfig.RedisHost, cfg.RedisConfig.RedisPort),
+		Password: cfg.RedisConfig.RedisPass,
+		DB:       cfg.RedisConfig.RedisDB,
+	})
+
+	kv := sessiondatabase.NewRedisDatabase(redisClient, sugar.Named("redisDatabase"))
+
+	session := sessiondatabase.NewSessionDatabase(sugar.Named("sessionDatabase"), kv)
+
 	userSvcParams := &service.UserServiceParams{
 		Logger:     sugar.Named("userService"),
 		Config:     cfg,
 		Database:   userDb,
 		JwtManager: jwtManager,
+		Session:    session,
 	}
 
 	userService := service.NewUserService(userSvcParams)

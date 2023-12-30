@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"ariga.io/atlas-provider-gorm/gormschema"
-	"github.com/thestoicway/backend/user_service/internal/model"
+	"github.com/thestoicway/backend/user_service/internal/user/model"
 )
 
 func main() {

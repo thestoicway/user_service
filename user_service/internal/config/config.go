@@ -10,6 +10,7 @@ type Config struct {
 	JwtSecret        string `env:"JWT_SECRET" env-required:"true"`
 	ServerConfig     ServerConfig
 	PostgresDatabase PostgresDatabase
+	RedisConfig      RedisDatabase
 }
 
 type ServerConfig struct {
@@ -22,6 +23,13 @@ type PostgresDatabase struct {
 	PostgresUser string `env:"POSTGRES_USER" env-default:"postgres"`
 	PostgresPass string `env:"POSTGRES_PASS" env-default:"postgres"`
 	PostgresDB   string `env:"POSTGRES_DB" env-default:"postgres"`
+}
+
+type RedisDatabase struct {
+	RedisPort int    `env:"REDIS_PORT" env-default:"6379"`
+	RedisHost string `env:"REDIS_HOST" env-default:"localhost"`
+	RedisPass string `env:"REDIS_PASS" env-default:""`
+	RedisDB   int    `env:"REDIS_DB" env-default:"0"`
 }
 
 // NewConfig returns a new Config struct from ENV variables

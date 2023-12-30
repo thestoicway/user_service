@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/thestoicway/backend/user_service/internal/jsonwebtoken"
-	"github.com/thestoicway/backend/user_service/internal/model"
+	"github.com/thestoicway/backend/user_service/internal/user/model"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -27,7 +27,19 @@ func (s *userService) SignUp(ctx context.Context, user *model.User) (tokenPair *
 		return nil, err
 	}
 
-	pair, err := s.JwtManager.GenerateTokenPair(id)
+	pair, info, err := s.JwtManager.GenerateTokenPair(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Creates a session in Redis where the key is ID of the
+	// refresh token and the value is the refresh token itself.
+	err = s.Session.AddSession(ctx, &model.Session{
+		JwtID:          info.RefreshTokenID,
+		RefreshToken:   pair.RefreshToken,
+		ExpirationTime: info.RefreshExpirationTime,
+	})
 
 	if err != nil {
 		return nil, err

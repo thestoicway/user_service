@@ -18,8 +18,13 @@ type TokenPair struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
+type AdditionalInfo struct {
+	RefreshTokenID        string        `json:"refresh_token_id"`
+	RefreshExpirationTime time.Duration `json:"refresh_expiration_time"`
+}
+
 type JwtManager interface {
-	GenerateTokenPair(uuid uuid.UUID) (tokenPair *TokenPair, err error)
+	GenerateTokenPair(uuid uuid.UUID) (tokenPair *TokenPair, info *AdditionalInfo, err error)
 	DecodeToken(token string) (claims *CustomClaims, err error)
 }
 

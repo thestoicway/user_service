@@ -7,9 +7,9 @@ import (
 	"github.com/google/uuid"
 )
 
-func (manager *jwtManager) GenerateTokenPair(uuid uuid.UUID) (tokenPair *TokenPair, err error) {
+func (manager *jwtManager) GenerateTokenPair(id uuid.UUID) (tokenPair *TokenPair, info *AdditionalInfo, err error) {
 	issuedAt := time.Now()
-	userID := uuid.String()
+	userID := id.String()
 
 	// Creates access and refresh tokens with claims
 	aToken := jwt.NewWithClaims(jwt.SigningMethodHS256, CustomClaims{
@@ -25,8 +25,10 @@ func (manager *jwtManager) GenerateTokenPair(uuid uuid.UUID) (tokenPair *TokenPa
 	accessToken, err := aToken.SignedString([]byte(manager.secret))
 
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
+
+	rTokenID := uuid.New().String()
 
 	rToken := jwt.NewWithClaims(jwt.SigningMethodHS256, CustomClaims{
 		UserID: userID,
@@ -35,17 +37,21 @@ func (manager *jwtManager) GenerateTokenPair(uuid uuid.UUID) (tokenPair *TokenPa
 			Subject:   "refresh_token",
 			ExpiresAt: jwt.NewNumericDate(issuedAt.Add(refreshTokenDuration)),
 			IssuedAt:  jwt.NewNumericDate(issuedAt),
+			ID:        rTokenID,
 		},
 	})
 
 	refreshToken, err := rToken.SignedString([]byte(manager.secret))
 
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	return &TokenPair{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-	}, nil
+			AccessToken:  accessToken,
+			RefreshToken: refreshToken,
+		}, &AdditionalInfo{
+			RefreshTokenID:        rTokenID,
+			RefreshExpirationTime: refreshTokenDuration,
+		}, nil
 }

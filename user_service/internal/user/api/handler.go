@@ -5,7 +5,7 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	customerrors "github.com/thestoicway/backend/custom_errors/custom_errors"
-	"github.com/thestoicway/backend/user_service/internal/service"
+	"github.com/thestoicway/backend/user_service/internal/user/service"
 	"go.uber.org/zap"
 )
 

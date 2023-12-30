@@ -6,7 +6,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
-	customerrors "github.com/thestoicway/backend/custom_errors/custom_errors"
+	customerrors "github.com/thestoicway/backend/custom_errors"
 	"gorm.io/gorm"
 )
 

@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/google/uuid"
-	customerrors "github.com/thestoicway/backend/custom_errors/custom_errors"
+	customerrors "github.com/thestoicway/backend/custom_errors"
 	"github.com/thestoicway/backend/user_service/internal/user/model"
 	"gorm.io/gorm"
 )

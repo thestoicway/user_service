@@ -17,7 +17,7 @@ func HandlerWrapper(handler func(w http.ResponseWriter, r *http.Request, ps http
 		if err != nil {
 			if err, ok := err.(*CustomError); ok {
 				jsonEncoder := json.NewEncoder(w)
-				w.WriteHeader(err.StatusCode)
+				w.WriteHeader(err.StatusCode())
 				resp := NewErrorResponse(err)
 				jsonEncoder.Encode(resp)
 				return

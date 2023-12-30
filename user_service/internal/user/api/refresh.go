@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-	customerrors "github.com/thestoicway/backend/custom_errors/custom_errors"
+	customerrors "github.com/thestoicway/backend/custom_errors"
 )
 
 func (h *userHandler) Refresh(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {

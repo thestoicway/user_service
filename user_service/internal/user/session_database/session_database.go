@@ -12,7 +12,7 @@ import (
 type SessionDatabase interface {
 	AddSession(ctx context.Context, session *model.Session) (err error)
 	GetSession(ctx context.Context, jwtID string) (session *model.Session, err error)
-	ReplaceSession(ctx context.Context, oldJwtID string, session *model.Session) (err error)
+	ReplaceSession(ctx context.Context, oldSession *model.Session, session *model.Session) (err error)
 	DeleteSession(ctx context.Context, jwtID string) (err error)
 }
 
@@ -72,12 +72,12 @@ func (s *redisDatabase) DeleteSession(ctx context.Context, jwtID string) (err er
 }
 
 // ReplaceSession replaces an old session with a new one in the Redis store.
-func (s *redisDatabase) ReplaceSession(ctx context.Context, oldJwtID string, session *model.Session) (err error) {
+func (s *redisDatabase) ReplaceSession(ctx context.Context, oldSession *model.Session, session *model.Session) (err error) {
 	// Start a Redis transaction
 	txPipeline := s.redis.TxPipeline()
 
 	// Queue commands in the transaction
-	txPipeline.Del(ctx, oldJwtID)
+	txPipeline.Del(ctx, oldSession.JwtID)
 	txPipeline.Set(ctx, session.JwtID, session.RefreshToken, session.ExpirationTime)
 
 	// Execute the transaction

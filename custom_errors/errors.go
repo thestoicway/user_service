@@ -45,6 +45,11 @@ type CustomError struct {
 	// Message is a human-readable description of the error.
 	// Included mainly for debugging purposes and a clarification of the error.
 	Message string
+
+	// Details can be used to provide additional information about the error.
+	// For example, if user is banned from OTP, then details can contain
+	// the date when the ban will be lifted.
+	Details interface{}
 }
 
 // Error returns the error message.
@@ -66,6 +71,13 @@ func (e *CustomError) StatusCode() int {
 		return http.StatusForbidden
 	default:
 		return http.StatusInternalServerError
+	}
+}
+
+func NewInternalServerError(err error) *CustomError {
+	return &CustomError{
+		Code:    ErrUnknown,
+		Message: err.Error(),
 	}
 }
 

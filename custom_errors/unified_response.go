@@ -60,15 +60,7 @@ func NewErrorResponse(err *CustomError) *UnifiedResponse {
 		err: &ErrorInfo{
 			Code:        err.Code,
 			Description: err.Message,
-		},
-	})
-}
-
-func NewInternalServerException(err error) *UnifiedResponse {
-	return newResponse(newResponseParams{
-		err: &ErrorInfo{
-			Code:        ErrUnknown,
-			Description: err.Error(),
+			Details:     err.Details,
 		},
 	})
 }

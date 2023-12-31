@@ -9,7 +9,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (s *userService) SignUp(ctx context.Context, user *model.User) (tokenPair *jsonwebtoken.TokenPair, err error) {
+func (s *userServiceImpl) SignUp(ctx context.Context, user *model.User) (tokenPair *jsonwebtoken.TokenPair, err error) {
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 
 	if err != nil {

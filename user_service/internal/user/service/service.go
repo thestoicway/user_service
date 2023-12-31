@@ -17,7 +17,7 @@ type UserService interface {
 	Refresh(ctx context.Context, refreshToken string) (tokenPair *jsonwebtoken.TokenPair, err error)
 }
 
-type userService struct {
+type userServiceImpl struct {
 	*UserServiceParams
 }
 
@@ -30,7 +30,7 @@ type UserServiceParams struct {
 }
 
 func NewUserService(p *UserServiceParams) UserService {
-	return &userService{
+	return &userServiceImpl{
 		UserServiceParams: p,
 	}
 }

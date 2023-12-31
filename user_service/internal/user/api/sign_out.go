@@ -6,6 +6,6 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func (h *userHandler) SignOut(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
+func (h *userHandlerImpl) SignOut(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
 	return nil
 }

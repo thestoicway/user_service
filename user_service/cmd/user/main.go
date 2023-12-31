@@ -20,55 +20,24 @@ import (
 )
 
 func main() {
-	zap, err := zap.NewProduction()
 	cfg := config.NewConfig()
-
-	if err != nil {
-		log.Fatalf("can't initialize zap logger: %v", err)
-	}
-
-	sugar := zap.Sugar()
-	defer sugar.Sync()
+	logger := initializeLogger()
 
 	db, err := database.OpenDB(cfg)
-
 	if err != nil {
-		sugar.Fatalf("can't open database: %v", err)
+		logger.Fatalf("can't open database: %v", err)
 	}
 
-	userDb := database.NewUserDatabase(
-		sugar.Named("userDatabase"),
-		db,
-	)
+	userDb := database.NewUserDatabase(logger.Named("userDatabase"), db)
+	jwtManager := jsonwebtoken.NewJwtManager(logger.Named("jwt_manager"), cfg.JwtSecret)
+	redisClient := createRedisClient(cfg)
+	session := sessiondatabase.NewRedisDatabase(logger.Named("sessionDatabase"), redisClient)
 
-	jwtManager := jsonwebtoken.NewJwtManager(sugar.Named("jwt_manager"), cfg.JwtSecret)
-
-	redisClient := redis.NewClient(&redis.Options{
-		Addr:     fmt.Sprintf("%s:%d", cfg.RedisConfig.RedisHost, cfg.RedisConfig.RedisPort),
-		Password: cfg.RedisConfig.RedisPass,
-		DB:       cfg.RedisConfig.RedisDB,
-	})
-
-	session := sessiondatabase.NewRedisDatabase(sugar.Named("sessionDatabase"), redisClient)
-
-	userSvcParams := &service.UserServiceParams{
-		Logger:     sugar.Named("userService"),
-		Config:     cfg,
-		Database:   userDb,
-		JwtManager: jwtManager,
-		Session:    session,
-	}
-
-	userService := service.NewUserService(userSvcParams)
-
-	userHandler := api.NewUserHandler(
-		sugar.Named("userHandler"),
-		userService,
-	)
+	userService := createUserService(logger.Named("userService"), cfg, userDb, jwtManager, session)
+	userHandler := api.NewUserHandler(logger.Named("userHandler"), userService)
 
 	router := httprouter.New()
-
-	userHandler.Register(router)
+	api.Register(router, userHandler)
 
 	server := http.Server{
 		Addr:    fmt.Sprintf(":%d", cfg.ServerConfig.Port),
@@ -76,15 +45,42 @@ func main() {
 	}
 
 	signalsChan := make(chan os.Signal, 1)
-
 	signal.Notify(signalsChan, os.Interrupt, syscall.SIGTERM)
 
 	go func() {
-		log.Printf("starting server on port %d", cfg.ServerConfig.Port)
+		logger.Infof("starting server on port %d", cfg.ServerConfig.Port)
 		if err := server.ListenAndServe(); err != nil {
-			log.Fatalf("can't start server: %v", err)
+			logger.Fatalf("can't start server: %v", err)
 		}
 	}()
 
 	<-signalsChan
+}
+
+func initializeLogger() *zap.SugaredLogger {
+	zapLogger, err := zap.NewProduction()
+	if err != nil {
+		log.Fatalf("can't initialize zap logger: %v", err)
+	}
+	defer zapLogger.Sync()
+	return zapLogger.Sugar()
+}
+
+func createRedisClient(cfg *config.Config) *redis.Client {
+	return redis.NewClient(&redis.Options{
+		Addr:     fmt.Sprintf("%s:%d", cfg.RedisConfig.RedisHost, cfg.RedisConfig.RedisPort),
+		Password: cfg.RedisConfig.RedisPass,
+		DB:       cfg.RedisConfig.RedisDB,
+	})
+}
+
+func createUserService(logger *zap.SugaredLogger, cfg *config.Config, userDb database.UserDatabase, jwtManager jsonwebtoken.JwtManager, session sessiondatabase.SessionDatabase) service.UserService {
+	userSvcParams := &service.UserServiceParams{
+		Logger:     logger,
+		Config:     cfg,
+		Database:   userDb,
+		JwtManager: jwtManager,
+		Session:    session,
+	}
+	return service.NewUserService(userSvcParams)
 }

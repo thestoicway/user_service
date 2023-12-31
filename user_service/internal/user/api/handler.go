@@ -14,23 +14,22 @@ type UserHandler interface {
 	SignUp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error
 	Refresh(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error
 	SignOut(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error
-	Register(router *httprouter.Router)
 }
 
-type userHandler struct {
+type userHandlerImpl struct {
 	logger  *zap.SugaredLogger
 	service service.UserService
 }
 
 // NewUserHandler creates a new userHandler
 func NewUserHandler(logger *zap.SugaredLogger, service service.UserService) UserHandler {
-	return &userHandler{
+	return &userHandlerImpl{
 		logger:  logger,
 		service: service,
 	}
 }
 
-func (h *userHandler) Register(router *httprouter.Router) {
+func Register(router *httprouter.Router, h UserHandler) {
 	router.POST("/signin", customerrors.HandlerWrapper(h.SignIn))
 	router.POST("/signup", customerrors.HandlerWrapper(h.SignUp))
 	router.POST("/refresh", customerrors.HandlerWrapper(h.Refresh))

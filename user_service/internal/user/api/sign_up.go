@@ -10,7 +10,7 @@ import (
 	"github.com/thestoicway/backend/user_service/internal/user/model"
 )
 
-func (h *userHandler) SignUp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
+func (h *userHandlerImpl) SignUp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
 	user := &model.User{}
 
 	err := json.NewDecoder(r.Body).Decode(user)

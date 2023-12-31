@@ -17,13 +17,13 @@ type UserDatabase interface {
 	InsertUser(ctx context.Context, user *model.UserDB) (userID uuid.UUID, err error)
 }
 
-type userDatabase struct {
+type userDatabaseImpl struct {
 	logger *zap.SugaredLogger
 	db     *gorm.DB
 }
 
 func NewUserDatabase(logger *zap.SugaredLogger, db *gorm.DB) UserDatabase {
-	return &userDatabase{
+	return &userDatabaseImpl{
 		logger: logger,
 		db:     db,
 	}

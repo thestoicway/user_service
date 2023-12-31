@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (db *userDatabase) GetUserByEmail(context context.Context, email string) (*model.UserDB, error) {
+func (db *userDatabaseImpl) GetUserByEmail(context context.Context, email string) (*model.UserDB, error) {
 	gormDb := db.db
 
 	var user model.UserDB

@@ -10,7 +10,7 @@ import (
 
 // Refresh is a method of userService that takes a context and a refresh token,
 // and returns a new pair of access and refresh tokens.
-func (s *userService) Refresh(ctx context.Context, refreshToken string) (tokenPair *jsonwebtoken.TokenPair, err error) {
+func (s *userServiceImpl) Refresh(ctx context.Context, refreshToken string) (tokenPair *jsonwebtoken.TokenPair, err error) {
 	// Decode the refresh token to get the claims
 	claims, err := s.JwtManager.DecodeToken(refreshToken)
 

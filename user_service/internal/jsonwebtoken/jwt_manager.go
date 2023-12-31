@@ -37,15 +37,15 @@ type JwtManager interface {
 	DecodeToken(token string) (claims *CustomClaims, err error)
 }
 
-// jwtManager is an implementation of the JwtManager interface.
-type jwtManager struct {
+// jwtManagerImpl is an implementation of the JwtManager interface.
+type jwtManagerImpl struct {
 	logger *zap.SugaredLogger
 	secret string
 }
 
 // NewJwtManager creates a new instance of JwtManager.
 func NewJwtManager(logger *zap.SugaredLogger, secret string) JwtManager {
-	return &jwtManager{
+	return &jwtManagerImpl{
 		logger: logger,
 		secret: secret,
 	}

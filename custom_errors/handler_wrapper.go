@@ -7,6 +7,14 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+func handleErrorResponse(w http.ResponseWriter, customError *CustomError) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(customError.StatusCode())
+	resp := NewErrorResponse(customError)
+	jsonEncoder := json.NewEncoder(w)
+	jsonEncoder.Encode(resp)
+}
+
 // HandlerWrapper is a middleware that wraps the handler with a function that
 // handles errors and returns a unified response.
 func HandlerWrapper(handler func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error) func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -14,20 +22,14 @@ func HandlerWrapper(handler func(w http.ResponseWriter, r *http.Request, ps http
 		err := handler(w, r, ps)
 
 		if err != nil {
-			w.Header().Set("Content-Type", "application/json")
 			if err, ok := err.(*CustomError); ok {
-				jsonEncoder := json.NewEncoder(w)
-				w.WriteHeader(err.StatusCode())
-				resp := NewErrorResponse(err)
-				jsonEncoder.Encode(resp)
+				handleErrorResponse(w, err)
 				return
 			}
 
-			resp := NewInternalServerException(err)
+			resp := NewInternalServerError(err)
 
-			w.WriteHeader(http.StatusInternalServerError)
-			jsonEncoder := json.NewEncoder(w)
-			jsonEncoder.Encode(resp)
+			handleErrorResponse(w, resp)
 			return
 		}
 	}

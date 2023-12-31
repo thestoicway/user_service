@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/thestoicway/backend/user_service/internal/config"
-	"github.com/thestoicway/backend/user_service/internal/jsonwebtoken"
 	"github.com/thestoicway/backend/user_service/internal/user/database"
+	"github.com/thestoicway/backend/user_service/internal/user/jsonwebtoken"
 	"github.com/thestoicway/backend/user_service/internal/user/model"
 	sessiondatabase "github.com/thestoicway/backend/user_service/internal/user/session_database"
 	"go.uber.org/zap"
@@ -17,7 +17,7 @@ type UserService interface {
 	Refresh(ctx context.Context, refreshToken string) (tokenPair *jsonwebtoken.TokenPair, err error)
 }
 
-type userService struct {
+type userServiceImpl struct {
 	*UserServiceParams
 }
 
@@ -30,7 +30,7 @@ type UserServiceParams struct {
 }
 
 func NewUserService(p *UserServiceParams) UserService {
-	return &userService{
+	return &userServiceImpl{
 		UserServiceParams: p,
 	}
 }

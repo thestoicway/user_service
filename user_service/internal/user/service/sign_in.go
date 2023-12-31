@@ -5,12 +5,12 @@ import (
 	"fmt"
 
 	customerrors "github.com/thestoicway/backend/custom_errors"
-	"github.com/thestoicway/backend/user_service/internal/jsonwebtoken"
+	"github.com/thestoicway/backend/user_service/internal/user/jsonwebtoken"
 	"github.com/thestoicway/backend/user_service/internal/user/model"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (s *userService) SignIn(ctx context.Context, user *model.User) (tokenPair *jsonwebtoken.TokenPair, err error) {
+func (s *userServiceImpl) SignIn(ctx context.Context, user *model.User) (tokenPair *jsonwebtoken.TokenPair, err error) {
 	userDb, err := s.Database.GetUserByEmail(ctx, user.Email)
 
 	if err != nil {

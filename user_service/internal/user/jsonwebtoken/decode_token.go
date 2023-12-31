@@ -7,7 +7,7 @@ import (
 
 // DecodeToken is a method on jwtManager that takes a JWT token as a string,
 // decodes it, validates it, and returns the claims in the token or an error.
-func (manager *jwtManager) DecodeToken(token string) (claims *CustomClaims, err error) {
+func (manager *jwtManagerImpl) DecodeToken(token string) (claims *CustomClaims, err error) {
 	// Parse the token with the claims
 	decodedToken, err := jwt.ParseWithClaims(token, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 		// This function returns the secret key for validating the token
@@ -23,7 +23,7 @@ func (manager *jwtManager) DecodeToken(token string) (claims *CustomClaims, err 
 	claims, ok := decodedToken.Claims.(*CustomClaims)
 
 	// If the assertion was not ok, return an UnauthorizedError
-	if !ok {
+	if !ok || claims == nil {
 		return nil, customerrors.NewUnauthorizedError("can't get claims from token")
 	}
 

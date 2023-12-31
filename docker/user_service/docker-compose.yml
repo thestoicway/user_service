@@ -48,7 +48,7 @@ services:
       user_service_postgres:
         condition: service_healthy
     volumes:
-      - ./user_service/migrations/:/migrations
+      - ../../user_service/migrations/:/migrations
 
   user_service_redis:
     container_name: "user_service_redis"

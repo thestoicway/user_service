@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (db *userDatabase) InsertUser(ctx context.Context, user *model.UserDB) (userID uuid.UUID, err error) {
+func (db *userDatabaseImpl) InsertUser(ctx context.Context, user *model.UserDB) (userID uuid.UUID, err error) {
 	gormDb := db.db
 
 	res := gormDb.Create(user)

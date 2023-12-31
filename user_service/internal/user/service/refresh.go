@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/thestoicway/backend/user_service/internal/jsonwebtoken"
+	"github.com/thestoicway/backend/user_service/internal/user/jsonwebtoken"
 	"github.com/thestoicway/backend/user_service/internal/user/model"
 )
 

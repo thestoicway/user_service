@@ -4,8 +4,8 @@ services:
   user_service:
     container_name: "user_service"
     build:
-      context: ../../
-      dockerfile: ./docker/user_service/Dockerfile
+      context: ../
+      dockerfile: ./user_service/Dockerfile
     ports:
       - "8080:8080"
     env_file:
@@ -48,7 +48,7 @@ services:
       user_service_postgres:
         condition: service_healthy
     volumes:
-      - ../../user_service/migrations/:/migrations
+      - ./migrations/:/migrations
 
   user_service_redis:
     container_name: "user_service_redis"

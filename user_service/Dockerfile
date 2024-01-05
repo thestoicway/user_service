@@ -17,7 +17,7 @@ COPY ./custom_errors ./custom_errors
 RUN cd user_service && go mod download
 
 # Set the working directory to the main application directory
-WORKDIR /app/user_service/cmd/user
+WORKDIR /app/user_service/cmd
 
 # Compile the application
 RUN go build -o user_service .
@@ -30,7 +30,7 @@ FROM debian:stable-slim
 WORKDIR /root/
 
 # Copy the compiled application from the builder stage
-COPY --from=builder /app/user_service/cmd/user/user_service .
+COPY --from=builder /app/user_service/cmd/user_service .
 
 RUN chmod +x user_service
 

@@ -30,8 +30,8 @@ func NewUserHandler(logger *zap.SugaredLogger, service service.UserService) User
 }
 
 func Register(router *httprouter.Router, h UserHandler) {
-	router.POST("/signin", customerrors.HandlerWrapper(h.SignIn))
-	router.POST("/signup", customerrors.HandlerWrapper(h.SignUp))
-	router.POST("/refresh", customerrors.HandlerWrapper(h.Refresh))
-	router.DELETE("/signout", customerrors.HandlerWrapper(h.SignOut))
+	router.POST("/api/v1/signin", customerrors.HandlerWrapper(h.SignIn))
+	router.POST("/api/v1/signup", customerrors.HandlerWrapper(h.SignUp))
+	router.POST("/api/v1/refresh", customerrors.HandlerWrapper(h.Refresh))
+	router.DELETE("/api/v1/signout", customerrors.HandlerWrapper(h.SignOut))
 }

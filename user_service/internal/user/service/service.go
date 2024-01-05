@@ -14,6 +14,7 @@ import (
 type UserService interface {
 	SignIn(ctx context.Context, user *model.User) (tokenPair *jsonwebtoken.TokenPair, err error)
 	SignUp(ctx context.Context, user *model.User) (tokenPair *jsonwebtoken.TokenPair, err error)
+	SignOut(ctx context.Context, refreshToken string) (err error)
 	Refresh(ctx context.Context, refreshToken string) (tokenPair *jsonwebtoken.TokenPair, err error)
 }
 

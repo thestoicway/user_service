@@ -9,6 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// newMockDB creates a new mock database for testing.
 func newMockDB(t *testing.T, logger *zap.SugaredLogger) (*gorm.DB, sqlmock.Sqlmock) {
 	t.Helper()
 

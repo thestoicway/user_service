@@ -58,6 +58,16 @@ func (e *CustomError) Error() string {
 	return e.Message
 }
 
+// / Is returns true if the target error is of the same type as the receiver.
+func (e *CustomError) Is(target error) bool {
+	t, ok := target.(*CustomError)
+	if !ok {
+		return false
+	}
+
+	return e.Code == t.Code && e.Message == t.Message && e.Details == t.Details
+}
+
 // StatusCode returns the HTTP status code for the error.
 func (e *CustomError) StatusCode() int {
 	switch e.Code {

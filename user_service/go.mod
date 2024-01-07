@@ -11,6 +11,7 @@ require (
 require (
 	ariga.io/atlas-provider-gorm v0.2.0 // indirect
 	github.com/BurntSushi/toml v1.2.1 // indirect
+	github.com/DATA-DOG/go-sqlmock v1.5.2 // indirect
 	github.com/Masterminds/squirrel v1.5.4 // indirect
 	github.com/alecthomas/kong v0.8.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect

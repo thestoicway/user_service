@@ -185,4 +185,43 @@ func TestGetUserByEmail(t *testing.T) {
 			t.Fatalf("Expected error: %s, got: %s", expectedError, err)
 		}
 	})
+
+	t.Run("Context Cancelled", func(t *testing.T) {
+		t.Parallel()
+
+		logger := zaptest.NewLogger(t).Sugar()
+
+		db, mock := newMockDB(t, logger)
+
+		email := "qwerty@gmail.com"
+
+		rows := sqlmock.NewRows([]string{"id", "email", "password_hash"}).
+			AddRow(uuid.New(), email, "password_hash")
+
+		mock.ExpectQuery("SELECT (.+) FROM \"users\" WHERE email = (.+)").
+			WithArgs(email).
+			WillReturnRows(rows)
+
+		userDB := database.NewUserDatabase(logger, db)
+
+		ctx, cancel := context.WithCancel(context.Background())
+
+		cancel()
+
+		user, err := userDB.GetUserByEmail(ctx, email)
+
+		if user != nil {
+			t.Fatalf("User is not nil")
+		}
+
+		if err == nil {
+			t.Fatalf("Expected error, got nil")
+		}
+
+		expectedError := context.Canceled
+
+		if !errors.Is(err, expectedError) {
+			t.Fatalf("Expected error: %s, got: %s", expectedError, err)
+		}
+	})
 }

@@ -19,7 +19,7 @@ func (db *userDatabaseImpl) GetUserByEmail(context context.Context, email string
 		return nil, customerrors.NewWrongCredentialsError()
 	}
 
-	gormDb := db.db
+	gormDb := db.db.WithContext(context)
 
 	var user model.UserDB
 

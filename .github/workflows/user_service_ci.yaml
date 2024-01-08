@@ -4,11 +4,7 @@ on:
   push:
     branches:
       - main
-    paths: 
-      - 'user_service/**'
   pull_request:
-    paths: 
-      - 'user_service/**'
 
 jobs:
   user-service-build:
@@ -26,12 +22,12 @@ jobs:
 
       # Install dependencies
       - name: Get dependencies
-        run: go work sync
+        run: go get -v -t -d ./...
 
       # Build
       - name: Build
-        run: go build -v user_service/cmd/main.go
+        run: go build -v ./...
 
       # Test
       - name: Test
-        run: go test -v ./user_service/...
+        run: go test -v ./...

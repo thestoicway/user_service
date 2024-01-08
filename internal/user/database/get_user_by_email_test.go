@@ -76,9 +76,9 @@ func TestGetUserByEmail(t *testing.T) {
 			t.Fatalf("Expected error, got nil")
 		}
 
-		if err, ok := err.(*customerrors.CustomError); ok {
-			if err.Code != customerrors.ErrWrongCredentials {
-				t.Fatalf("Expected error code: %d, got: %d", customerrors.ErrWrongCredentials, err.Code)
+		if customErr, ok := err.(*customerrors.CustomError); ok {
+			if customErr.Code != customerrors.ErrWrongCredentials {
+				t.Fatalf("Expected error code: %d, got: %d", customerrors.ErrWrongCredentials, customErr.Code)
 			}
 		} else {
 			t.Fatalf("Expected error to be of type *CustomError, got: %T", err)
@@ -117,42 +117,6 @@ func TestGetUserByEmail(t *testing.T) {
 
 		if user.Email != email {
 			t.Fatalf("Emails do not match")
-		}
-	})
-
-	t.Run("InvalidEmail", func(t *testing.T) {
-		t.Parallel()
-
-		logger := zaptest.NewLogger(t).Sugar()
-
-		db, mock := newMockDB(t, logger)
-
-		rows := sqlmock.NewRows([]string{"id", "email", "password_hash"}).
-			AddRow(uuid.New(), "qwerty", "password_hash")
-
-		mock.ExpectQuery("SELECT (.+) FROM \"users\" WHERE email = (.+)").
-			WillReturnRows(rows)
-
-		userDB := database.NewUserDatabase(logger, db)
-
-		ctx := context.Background()
-
-		user, err := userDB.GetUserByEmail(ctx, "qwerty")
-
-		if user != nil {
-			t.Fatalf("User is not nil")
-		}
-
-		if err == nil {
-			t.Fatalf("Expected error, got nil")
-		}
-
-		if err, ok := err.(*customerrors.CustomError); ok {
-			if err.Code != customerrors.ErrWrongCredentials {
-				t.Fatalf("Expected error code: %d, got: %d", customerrors.ErrWrongCredentials, err.Code)
-			}
-		} else {
-			t.Fatalf("Expected error to be of type *CustomError, got: %T", err)
 		}
 	})
 

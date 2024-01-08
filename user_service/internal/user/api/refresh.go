@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -29,7 +30,7 @@ func getRefreshTokenFromQueryParams(r *http.Request) (string, error) {
 	refreshToken := r.URL.Query().Get("refresh_token")
 	if refreshToken == "" {
 		return "", customerrors.NewWrongInputError(
-			"Refresh token should be provided in the request query-parameters",
+			errors.New("refresh token is required"),
 		)
 	}
 	return refreshToken, nil

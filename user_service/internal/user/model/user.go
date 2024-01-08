@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"net/mail"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -27,10 +28,17 @@ func (u *User) Validate() error {
 				fields = append(fields, err.Field())
 			}
 
-			return customerrors.NewWrongInputError(fmt.Sprintf("wrong input fields: %v", fields))
+			return customerrors.NewWrongInputError(fmt.Errorf("wrong input fields: %v", fields))
 		}
 
-		return customerrors.NewWrongInputError(fmt.Sprintf("can't validate user: %v", err.Error()))
+		return customerrors.NewWrongInputError(fmt.Errorf("can't validate user: %v", err.Error()))
+	}
+
+	// validate if email is not empty and is valid
+	_, err = mail.ParseAddress(u.Email)
+
+	if err != nil {
+		return customerrors.NewWrongCredentialsError(err)
 	}
 
 	return nil

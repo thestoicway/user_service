@@ -1,6 +1,10 @@
 package customerrors
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/pkg/errors"
+)
 
 type ErrorCode = int
 
@@ -50,6 +54,10 @@ type CustomError struct {
 	// For example, if user is banned from OTP, then details can contain
 	// the date when the ban will be lifted.
 	Details interface{}
+
+	// OriginalError is the original error that occurred.
+	// It can be used to get the stack trace of the error.
+	OriginalError error
 }
 
 // Error returns the error message.
@@ -65,7 +73,10 @@ func (e *CustomError) Is(target error) bool {
 		return false
 	}
 
-	return e.Code == t.Code && e.Message == t.Message && e.Details == t.Details
+	return e.Code == t.Code &&
+		e.Message == t.Message &&
+		e.Details == t.Details &&
+		e.OriginalError == t.OriginalError
 }
 
 // StatusCode returns the HTTP status code for the error.
@@ -85,27 +96,35 @@ func (e *CustomError) StatusCode() int {
 }
 
 func NewInternalServerError(err error) *CustomError {
+	wrappedErr := errors.Wrap(err, "internal server error")
 	return &CustomError{
-		Code:    ErrUnknown,
-		Message: err.Error(),
+		Code:          ErrUnknown,
+		Message:       wrappedErr.Error(),
+		OriginalError: wrappedErr,
 	}
 }
 
 // NewWrongCredentialsError returns a new error with the given message.
 // This error should be used when the user provides wrong credentials.
-func NewWrongCredentialsError() error {
+func NewWrongCredentialsError(err error) error {
+	wrappedErr := errors.Wrap(err, "wrong credentials")
+
 	return &CustomError{
-		Code:    ErrWrongCredentials,
-		Message: "Wrong credentials, either email or password is wrong",
+		Code:          ErrWrongCredentials,
+		Message:       wrappedErr.Error(),
+		OriginalError: wrappedErr,
 	}
 }
 
 // NewWrongInputError returns a new error with the given message.
 // This error should be used when wrong input is provided.
-func NewWrongInputError(message string) error {
+func NewWrongInputError(err error) error {
+	wrappedErr := errors.Wrap(err, "wrong input")
+
 	return &CustomError{
-		Code:    ErrWrongInput,
-		Message: message,
+		Code:          ErrWrongInput,
+		Message:       wrappedErr.Error(),
+		OriginalError: wrappedErr,
 	}
 }
 
@@ -120,9 +139,12 @@ func NewDuplicateEmailError() error {
 
 // NewUnauthorizedError returns an error that should be used
 // when the user is not authorized to perform the operation.
-func NewUnauthorizedError(message string) error {
+func NewUnauthorizedError(err error) error {
+	wrappedErr := errors.Wrap(err, "unauthorized")
+
 	return &CustomError{
-		Code:    ErrUnauthorized,
-		Message: message,
+		Code:          ErrUnauthorized,
+		Message:       wrappedErr.Error(),
+		OriginalError: wrappedErr,
 	}
 }

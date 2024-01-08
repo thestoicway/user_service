@@ -24,7 +24,7 @@ func (s *redisDatabase) ReplaceSession(ctx context.Context, oldSession *model.Se
 		s.logger.Errorw("failed to replace session in redis", "error", err)
 
 		if err == redis.Nil {
-			return customerrors.NewUnauthorizedError("invalid session")
+			return customerrors.NewUnauthorizedError(err)
 		}
 
 		return err

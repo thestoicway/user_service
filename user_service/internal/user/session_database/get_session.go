@@ -2,6 +2,7 @@ package sessiondatabase
 
 import (
 	"context"
+	"errors"
 
 	"github.com/redis/go-redis/v9"
 	customerrors "github.com/thestoicway/backend/custom_errors"
@@ -13,10 +14,10 @@ func (s *redisDatabase) GetSession(ctx context.Context, jwtID string) (session *
 	refreshToken, err := s.redis.Get(ctx, jwtID).Result()
 
 	if err != nil {
-		s.logger.Errorw("failed to get session from redis", "error", err)
-
 		if err == redis.Nil {
-			return nil, customerrors.NewUnauthorizedError("invalid session")
+			return nil, customerrors.NewUnauthorizedError(
+				errors.New("session not found"),
+			)
 		}
 
 		return nil, err

@@ -1,6 +1,8 @@
 package jsonwebtoken
 
 import (
+	"errors"
+
 	"github.com/golang-jwt/jwt/v5"
 	customerrors "github.com/thestoicway/backend/custom_errors"
 )
@@ -16,7 +18,7 @@ func (manager *jwtManagerImpl) DecodeToken(token string) (claims *CustomClaims, 
 
 	// If there was an error in parsing, return an UnauthorizedError
 	if err != nil {
-		return nil, customerrors.NewUnauthorizedError(err.Error())
+		return nil, customerrors.NewUnauthorizedError(err)
 	}
 
 	// Assert that the claims in the token are of type *CustomClaims
@@ -24,12 +26,12 @@ func (manager *jwtManagerImpl) DecodeToken(token string) (claims *CustomClaims, 
 
 	// If the assertion was not ok, return an UnauthorizedError
 	if !ok || claims == nil {
-		return nil, customerrors.NewUnauthorizedError("can't get claims from token")
+		return nil, customerrors.NewUnauthorizedError(errors.New("token claims are not of type *CustomClaims"))
 	}
 
 	// Check if the duration between the issued time and the expiry time of the token is correct
 	if claims.ExpiresAt.Sub(claims.IssuedAt.Time) != refreshTokenDuration {
-		return nil, customerrors.NewUnauthorizedError("token duration is incorrect")
+		return nil, customerrors.NewUnauthorizedError(errors.New("token duration is not correct"))
 	}
 
 	// If everything is ok, return the claims in the token

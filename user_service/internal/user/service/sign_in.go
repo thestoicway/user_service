@@ -20,7 +20,7 @@ func (s *userServiceImpl) SignIn(ctx context.Context, user *model.User) (tokenPa
 	err = bcrypt.CompareHashAndPassword([]byte(userDb.PasswordHash), []byte(user.Password))
 
 	if err != nil {
-		return nil, customerrors.NewWrongCredentialsError()
+		return nil, customerrors.NewWrongCredentialsError(err)
 	}
 
 	pair, info, err := s.JwtManager.GenerateTokenPair(userDb.ID)

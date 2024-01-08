@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -11,15 +10,12 @@ import (
 )
 
 func (h *userHandlerImpl) SignIn(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
-
 	user := &model.User{}
 
 	err := json.NewDecoder(r.Body).Decode(user)
 
 	if err != nil {
-		return customerrors.NewWrongInputError(
-			fmt.Sprintf("can't decode request body: %v", err.Error()),
-		)
+		return customerrors.NewWrongInputError(err)
 	}
 
 	if err := user.Validate(); err != nil {

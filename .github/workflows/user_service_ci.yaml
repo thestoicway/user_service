@@ -13,9 +13,6 @@ on:
 jobs:
   user-service-build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./user_service
 
     steps:
       - name: Checkout code
@@ -29,11 +26,12 @@ jobs:
 
       # Install dependencies
       - name: Get dependencies
-        run: go get -v -t -d ./...
+        run: go work sync
 
       # Build
       - name: Build
-        run: go build -v cmd/main.go
+        run: go build -v user_service/cmd/main.go
 
+      # Test
       - name: Test
-        run: go test -v ./...
+        run: go test -v ./user_service/...

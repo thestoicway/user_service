@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (db *userDatabaseImpl) InsertUser(ctx context.Context, user *model.UserDB) (userID uuid.UUID, err error) {
+func (db *userDatabaseImpl) InsertUser(ctx context.Context, user *model.UserDB) (userID *uuid.UUID, err error) {
 	gormDb := db.db
 
 	res := gormDb.Create(user)
@@ -19,11 +19,11 @@ func (db *userDatabaseImpl) InsertUser(ctx context.Context, user *model.UserDB) 
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrDuplicatedKey) {
-			return uuid.UUID{}, customerrors.NewDuplicateEmailError()
+			return nil, customerrors.NewDuplicateEmailError()
 		}
 
-		return uuid.UUID{}, err
+		return nil, err
 	}
 
-	return user.ID, nil
+	return &user.ID, nil
 }

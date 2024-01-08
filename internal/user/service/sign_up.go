@@ -27,7 +27,7 @@ func (s *userServiceImpl) SignUp(ctx context.Context, user *model.User) (tokenPa
 		return nil, err
 	}
 
-	pair, info, err := s.JwtManager.GenerateTokenPair(id)
+	pair, info, err := s.JwtManager.GenerateTokenPair(*id)
 
 	if err != nil {
 		return nil, err

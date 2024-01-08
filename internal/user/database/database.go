@@ -14,7 +14,7 @@ import (
 
 type UserDatabase interface {
 	GetUserByEmail(ctx context.Context, email string) (*model.UserDB, error)
-	InsertUser(ctx context.Context, user *model.UserDB) (userID uuid.UUID, err error)
+	InsertUser(ctx context.Context, user *model.UserDB) (userID *uuid.UUID, err error)
 }
 
 type userDatabaseImpl struct {

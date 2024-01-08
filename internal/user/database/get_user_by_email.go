@@ -12,7 +12,7 @@ import (
 
 func (db *userDatabaseImpl) GetUserByEmail(context context.Context, email string) (*model.UserDB, error) {
 	gormDb := db.db.WithContext(context)
-	
+
 	var user model.UserDB
 
 	err := gormDb.Where("email = ?", email).First(&user).Error

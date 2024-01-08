@@ -11,7 +11,7 @@ require (
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/redis/go-redis/v9 v9.3.1
-	github.com/thestoicway/backend/custom_errors v0.0.0-20240107172429-4130ce73dc17
+	github.com/thestoicway/custom_errors v0.0.0-20240108110853-dfd98a94c1f5
 	go.uber.org/zap v1.26.0
 	golang.org/x/crypto v0.17.0
 	gorm.io/driver/postgres v1.5.4
@@ -36,6 +36,7 @@ require (
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
 	github.com/mattn/go-sqlite3 v1.14.17 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/net v0.19.0 // indirect
 	golang.org/x/sync v0.5.0 // indirect

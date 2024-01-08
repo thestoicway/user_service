@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	customerrors "github.com/thestoicway/backend/custom_errors"
 	"github.com/thestoicway/backend/user_service/internal/user/jsonwebtoken"
 	"github.com/thestoicway/backend/user_service/internal/user/model"
+	customerrors "github.com/thestoicway/custom_errors"
 	"golang.org/x/crypto/bcrypt"
 )
 

@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/golang-jwt/jwt/v5"
-	customerrors "github.com/thestoicway/backend/custom_errors"
+	customerrors "github.com/thestoicway/custom_errors"
 )
 
 // DecodeToken is a method on jwtManager that takes a JWT token as a string,

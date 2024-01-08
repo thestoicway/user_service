@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-	customerrors "github.com/thestoicway/backend/custom_errors"
 	"github.com/thestoicway/backend/user_service/internal/user/model"
+	customerrors "github.com/thestoicway/custom_errors"
 )
 
 func (h *userHandlerImpl) SignUp(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {

@@ -7,8 +7,8 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/google/uuid"
-	customerrors "github.com/thestoicway/backend/custom_errors"
 	"github.com/thestoicway/backend/user_service/internal/user/database"
+	customerrors "github.com/thestoicway/custom_errors"
 	"go.uber.org/zap/zaptest"
 )
 

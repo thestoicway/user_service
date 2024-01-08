@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/google/uuid"
 	"github.com/thestoicway/backend/user_service/internal/user/database"
 	"github.com/thestoicway/backend/user_service/internal/user/model"
 	customerrors "github.com/thestoicway/custom_errors"
@@ -24,7 +25,6 @@ func TestInserUser(t *testing.T) {
 
 		mock.ExpectBegin()
 		mock.ExpectQuery("INSERT INTO \"users\" (.+) VALUES (.+)").
-			WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
 			WillReturnError(gorm.ErrDuplicatedKey)
 		mock.ExpectRollback()
 
@@ -57,6 +57,53 @@ func TestInserUser(t *testing.T) {
 			}
 		} else {
 			t.Fatalf("Expected custom error, got %v", err)
+		}
+	})
+
+	t.Run("Expected flow", func(t *testing.T) {
+		t.Parallel()
+
+		logger := zaptest.NewLogger(t).Sugar()
+
+		db, mock := newMockDB(t, logger)
+
+		uid := uuid.New()
+
+		mock.ExpectBegin()
+		mock.ExpectQuery("INSERT INTO \"users\" (.+) VALUES (.+)").
+			WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg()).
+			WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(uid))
+		mock.ExpectCommit()
+
+		email := "qwerty@gmail.com"
+
+		userDB := database.NewUserDatabase(logger, db)
+
+		ctx := context.Background()
+
+		userToInsert := &model.UserDB{
+			Email:        email,
+			PasswordHash: "password_hash",
+		}
+
+		id, err := userDB.InsertUser(ctx, userToInsert)
+
+		if err != nil {
+			t.Fatalf("Expected no error, got %v", err)
+		}
+
+		if id == nil {
+			t.Fatalf("Expected id, got nil")
+		}
+
+		if *id != uid {
+			t.Fatalf("Expected id %v, got %v", uid, id)
+		}
+
+		// we make sure that all expectations were met
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Fatalf("there were unfulfilled expectations: %s", err)
+			return
 		}
 	})
 }

@@ -4,20 +4,17 @@ FROM golang:1.21.4 as builder
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy the go.work file if you are using workspace mode in Go
-COPY go.work go.work.sum ./
-
-# Copy the entire user_service directory
-COPY ./user_service ./user_service
-
-# Copy the custom_errors package
-COPY ./custom_errors ./custom_errors
+# Copy the go.mod and go.sum files to the working directory
+COPY go.mod go.sum ./
 
 # Download necessary Go modules
-RUN cd user_service && go mod download
+RUN go mod download
+
+# Copy the entire user_service directory
+COPY . .
 
 # Set the working directory to the main application directory
-WORKDIR /app/user_service/cmd
+WORKDIR /app/cmd
 
 # Compile the application
 RUN go build -o user_service .
@@ -30,7 +27,7 @@ FROM debian:stable-slim
 WORKDIR /root/
 
 # Copy the compiled application from the builder stage
-COPY --from=builder /app/user_service/cmd/user_service .
+COPY --from=builder /app/cmd/user_service .
 
 RUN chmod +x user_service
 

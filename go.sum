@@ -78,8 +78,8 @@ github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO
 github.com/stretchr/testify v1.8.2/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
 github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcUk=
 github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
-github.com/thestoicway/custom_errors v0.0.0-20240108110853-dfd98a94c1f5 h1:/wSHHqvaDPhs6J4h/DAJF1qhpFn2vHxD1DM6RqvkR1o=
-github.com/thestoicway/custom_errors v0.0.0-20240108110853-dfd98a94c1f5/go.mod h1:QW0bZk2eep9CYx7buM0DjEgbH8RPJt/XEBdjqYQvC9g=
+github.com/thestoicway/custom_errors v0.0.2 h1:rKWHjP9CD5Ghe7i96CabVDIxdQA3kOqlFdwIrdXcA6E=
+github.com/thestoicway/custom_errors v0.0.2/go.mod h1:QW0bZk2eep9CYx7buM0DjEgbH8RPJt/XEBdjqYQvC9g=
 go.uber.org/goleak v1.2.0 h1:xqgm/S+aQvhWFTtR0XK3Jvg7z8kGV8P4X14IzwN3Eqk=
 go.uber.org/goleak v1.2.0/go.mod h1:XJYK+MuIchqpmGmUSAzotztawfKvYLUIgg7guXrwVUo=
 go.uber.org/multierr v1.11.0 h1:blXXJkSxSSfBVBlC76pxqeO+LN3aDfLQo+309xJstO0=

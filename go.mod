@@ -11,7 +11,7 @@ require (
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/redis/go-redis/v9 v9.3.1
-	github.com/thestoicway/custom_errors v0.0.0-20240108110853-dfd98a94c1f5
+	github.com/thestoicway/custom_errors v0.0.2
 	go.uber.org/zap v1.26.0
 	golang.org/x/crypto v0.17.0
 	gorm.io/driver/postgres v1.5.4

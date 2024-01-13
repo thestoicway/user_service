@@ -106,4 +106,35 @@ func TestInserUser(t *testing.T) {
 			return
 		}
 	})
+
+	t.Run("Cancelled context", func(t *testing.T) {
+		t.Parallel()
+
+		logger := zaptest.NewLogger(t).Sugar()
+
+		db, _ := newMockDB(t, logger)
+
+		email := "qwerty@gmail.com"
+
+		userDB := database.NewUserDatabase(logger, db)
+
+		ctx, cancel := context.WithCancel(context.Background())
+
+		cancel()
+
+		userToInsert := &model.UserDB{
+			Email:        email,
+			PasswordHash: "password_hash",
+		}
+
+		id, err := userDB.InsertUser(ctx, userToInsert)
+
+		if id != nil {
+			t.Fatalf("Expected nil user, got %v", id)
+		}
+
+		if err != context.Canceled {
+			t.Fatalf("Expected context cancelled error, got %v", err)
+		}
+	})
 }

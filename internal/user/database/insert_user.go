@@ -11,7 +11,7 @@ import (
 )
 
 func (db *userDatabaseImpl) InsertUser(ctx context.Context, user *model.UserDB) (userID *uuid.UUID, err error) {
-	gormDb := db.db
+	gormDb := db.db.WithContext(ctx)
 
 	res := gormDb.Create(user)
 

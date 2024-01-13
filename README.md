@@ -1,5 +1,8 @@
 # User Service
 
+[![CI](https://github.com/thestoicway/user_service/actions/workflows/user_service_ci.yaml/badge.svg)](https://github.com/thestoicway/user_service/actions/workflows/user_service_ci.yaml)
+[![codecov](https://codecov.io/gh/thestoicway/user_service/graph/badge.svg?token=ACX2YPASDZ)](https://codecov.io/gh/thestoicway/user_service)
+
 Service that is responsible for user authentication and authorization.
 It also provides user profile information.
 

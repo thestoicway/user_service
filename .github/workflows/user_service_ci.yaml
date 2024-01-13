@@ -4,18 +4,11 @@ on:
   push:
     branches:
       - main
-    paths: 
-      - 'user_service/**'
   pull_request:
-    paths: 
-      - 'user_service/**'
 
 jobs:
   user-service-build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./user_service
 
     steps:
       - name: Checkout code
@@ -35,5 +28,6 @@ jobs:
       - name: Build
         run: go build -v ./...
 
+      # Test
       - name: Test
         run: go test -v ./...

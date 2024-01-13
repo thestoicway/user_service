@@ -1,0 +1,71 @@
+version: "3"
+
+services:
+  user_service:
+    container_name: "user_service"
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      user_service_postgres_migrate:
+        condition: service_completed_successfully
+      user_service_redis:
+        condition: service_healthy
+    networks:
+      - user_service_network
+
+  user_service_postgres:
+    container_name: "user_service_postgres"
+    image: "postgres:latest"
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=user_service
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - user_service_network
+
+  user_service_postgres_migrate:
+    image: arigaio/atlas:latest
+    command: >
+      migrate apply
+      --url postgres://postgres:postgres@user_service_postgres:5432/user_service?sslmode=disable
+    networks:
+      - user_service_network
+    depends_on:
+      user_service_postgres:
+        condition: service_healthy
+    volumes:
+      - ./migrations/:/migrations
+
+  user_service_redis:
+    container_name: "user_service_redis"
+    image: "redis:latest"
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "6379:6379"
+    networks:
+      - user_service_network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  user_service_network:
+    driver: bridge

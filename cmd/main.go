@@ -10,12 +10,12 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/redis/go-redis/v9"
-	"github.com/thestoicway/backend/user_service/internal/config"
-	"github.com/thestoicway/backend/user_service/internal/user/api"
-	"github.com/thestoicway/backend/user_service/internal/user/database"
-	"github.com/thestoicway/backend/user_service/internal/user/jsonwebtoken"
-	"github.com/thestoicway/backend/user_service/internal/user/service"
-	sessiondatabase "github.com/thestoicway/backend/user_service/internal/user/session_database"
+	"github.com/thestoicway/user_service/internal/api"
+	"github.com/thestoicway/user_service/internal/config"
+	"github.com/thestoicway/user_service/internal/database"
+	"github.com/thestoicway/user_service/internal/jsonwebtoken"
+	"github.com/thestoicway/user_service/internal/service"
+	sessiondatabase "github.com/thestoicway/user_service/internal/session_database"
 	"go.uber.org/zap"
 )
 
@@ -77,7 +77,6 @@ func createRedisClient(cfg *config.Config) *redis.Client {
 func createUserService(logger *zap.SugaredLogger, cfg *config.Config, userDb database.UserDatabase, jwtManager jsonwebtoken.JwtManager, session sessiondatabase.SessionDatabase) service.UserService {
 	userSvcParams := &service.UserServiceParams{
 		Logger:     logger,
-		Config:     cfg,
 		Database:   userDb,
 		JwtManager: jwtManager,
 		Session:    session,

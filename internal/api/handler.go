@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/thestoicway/backend/user_service/internal/user/service"
 	customerrors "github.com/thestoicway/custom_errors"
+	"github.com/thestoicway/user_service/internal/service"
 	"go.uber.org/zap"
 )
 

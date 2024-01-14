@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/thestoicway/backend/user_service/internal/user/model"
 	customerrors "github.com/thestoicway/custom_errors"
+	"github.com/thestoicway/user_service/internal/model"
 )
 
 // ReplaceSession replaces an old session with a new one in the Redis store.

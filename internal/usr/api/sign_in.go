@@ -6,7 +6,7 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	customerrors "github.com/thestoicway/custom_errors"
-	"github.com/thestoicway/user_service/internal/model"
+	"github.com/thestoicway/user_service/internal/usr/model"
 )
 
 func (h *userHandlerImpl) SignIn(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {

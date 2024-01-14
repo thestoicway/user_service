@@ -10,12 +10,12 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/redis/go-redis/v9"
-	"github.com/thestoicway/user_service/internal/api"
 	"github.com/thestoicway/user_service/internal/config"
-	"github.com/thestoicway/user_service/internal/database"
-	"github.com/thestoicway/user_service/internal/jsonwebtoken"
-	"github.com/thestoicway/user_service/internal/service"
-	sessiondatabase "github.com/thestoicway/user_service/internal/session_database"
+	"github.com/thestoicway/user_service/internal/usr/api"
+	"github.com/thestoicway/user_service/internal/usr/database"
+	"github.com/thestoicway/user_service/internal/usr/jsonwebtoken"
+	"github.com/thestoicway/user_service/internal/usr/service"
+	sessiondatabase "github.com/thestoicway/user_service/internal/usr/session_database"
 	"go.uber.org/zap"
 )
 

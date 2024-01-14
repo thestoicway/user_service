@@ -6,7 +6,7 @@ import (
 
 	customerrors "github.com/thestoicway/custom_errors"
 
-	"github.com/thestoicway/user_service/internal/model"
+	"github.com/thestoicway/user_service/internal/usr/model"
 	"gorm.io/gorm"
 )
 

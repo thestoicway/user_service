@@ -6,7 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/thestoicway/user_service/internal/config"
-	"github.com/thestoicway/user_service/internal/model"
+	"github.com/thestoicway/user_service/internal/usr/model"
 	"go.uber.org/zap"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

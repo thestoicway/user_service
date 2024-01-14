@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/thestoicway/user_service/internal/jsonwebtoken"
-	"github.com/thestoicway/user_service/internal/model"
+	"github.com/thestoicway/user_service/internal/usr/jsonwebtoken"
+	"github.com/thestoicway/user_service/internal/usr/model"
 	"golang.org/x/crypto/bcrypt"
 )
 

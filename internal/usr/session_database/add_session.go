@@ -3,7 +3,7 @@ package sessiondatabase
 import (
 	"context"
 
-	"github.com/thestoicway/user_service/internal/model"
+	"github.com/thestoicway/user_service/internal/usr/model"
 )
 
 // AddSession adds a new session to the Redis store.

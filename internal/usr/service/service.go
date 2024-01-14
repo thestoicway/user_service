@@ -3,10 +3,10 @@ package service
 import (
 	"context"
 
-	"github.com/thestoicway/user_service/internal/database"
-	"github.com/thestoicway/user_service/internal/jsonwebtoken"
-	"github.com/thestoicway/user_service/internal/model"
-	sessiondatabase "github.com/thestoicway/user_service/internal/session_database"
+	"github.com/thestoicway/user_service/internal/usr/database"
+	"github.com/thestoicway/user_service/internal/usr/jsonwebtoken"
+	"github.com/thestoicway/user_service/internal/usr/model"
+	sessiondatabase "github.com/thestoicway/user_service/internal/usr/session_database"
 	"go.uber.org/zap"
 )
 

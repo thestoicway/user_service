@@ -6,7 +6,7 @@ import (
 
 	"github.com/redis/go-redis/v9"
 	customerrors "github.com/thestoicway/custom_errors"
-	"github.com/thestoicway/user_service/internal/model"
+	"github.com/thestoicway/user_service/internal/usr/model"
 )
 
 // GetSession retrieves a session from the Redis store using the JWT ID.

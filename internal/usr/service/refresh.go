@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/thestoicway/user_service/internal/jsonwebtoken"
-	"github.com/thestoicway/user_service/internal/model"
+	"github.com/thestoicway/user_service/internal/usr/jsonwebtoken"
+	"github.com/thestoicway/user_service/internal/usr/model"
 )
 
 // Refresh is a method of userService that takes a context and a refresh token,

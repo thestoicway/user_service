@@ -3,11 +3,10 @@ package service
 import (
 	"context"
 
-	"github.com/thestoicway/backend/user_service/internal/config"
-	"github.com/thestoicway/backend/user_service/internal/user/database"
-	"github.com/thestoicway/backend/user_service/internal/user/jsonwebtoken"
-	"github.com/thestoicway/backend/user_service/internal/user/model"
-	sessiondatabase "github.com/thestoicway/backend/user_service/internal/user/session_database"
+	"github.com/thestoicway/user_service/internal/database"
+	"github.com/thestoicway/user_service/internal/jsonwebtoken"
+	"github.com/thestoicway/user_service/internal/model"
+	sessiondatabase "github.com/thestoicway/user_service/internal/session_database"
 	"go.uber.org/zap"
 )
 
@@ -24,7 +23,6 @@ type userServiceImpl struct {
 
 type UserServiceParams struct {
 	Logger     *zap.SugaredLogger
-	Config     *config.Config
 	Database   database.UserDatabase
 	JwtManager jsonwebtoken.JwtManager
 	Session    sessiondatabase.SessionDatabase

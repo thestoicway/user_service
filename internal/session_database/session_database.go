@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/thestoicway/backend/user_service/internal/user/model"
+	"github.com/thestoicway/user_service/internal/model"
 	"go.uber.org/zap"
 )
 

@@ -6,9 +6,9 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/google/uuid"
-	"github.com/thestoicway/backend/user_service/internal/user/database"
-	"github.com/thestoicway/backend/user_service/internal/user/model"
 	customerrors "github.com/thestoicway/custom_errors"
+	"github.com/thestoicway/user_service/internal/database"
+	"github.com/thestoicway/user_service/internal/model"
 	"go.uber.org/zap/zaptest"
 	"gorm.io/gorm"
 )

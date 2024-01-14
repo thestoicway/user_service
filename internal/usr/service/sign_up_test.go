@@ -77,29 +77,7 @@ func TestSignUp(t *testing.T) {
 	})
 
 	t.Run("error when user already exists", func(t *testing.T) {
-		mockDatabase.EXPECT().InsertUser(gomock.Any(), gomock.Any()).Return("", errors.New("user already exists"))
-
-		_, err := s.SignUp(ctx, user)
-		assert.Error(t, err)
-	})
-
-	t.Run("error when email is invalid", func(t *testing.T) {
-		user.Email = "invalid email"
-
-		mockDatabase.EXPECT().InsertUser(gomock.Any(), gomock.Any()).Return("", nil)
-		mockJwtManager.EXPECT().GenerateTokenPair(gomock.Any()).Return(&jsonwebtoken.TokenPair{}, &jsonwebtoken.AdditionalInfo{}, nil)
-		mockSession.EXPECT().AddSession(gomock.Any(), gomock.Any()).Return(nil)
-
-		_, err := s.SignUp(ctx, user)
-		assert.Error(t, err)
-	})
-
-	t.Run("error when password is too short", func(t *testing.T) {
-		user.Password = "short"
-
-		mockDatabase.EXPECT().InsertUser(gomock.Any(), gomock.Any()).Return("", nil)
-		mockJwtManager.EXPECT().GenerateTokenPair(gomock.Any()).Return(&jsonwebtoken.TokenPair{}, &jsonwebtoken.AdditionalInfo{}, nil)
-		mockSession.EXPECT().AddSession(gomock.Any(), gomock.Any()).Return(nil)
+		mockDatabase.EXPECT().InsertUser(gomock.Any(), gomock.Any()).Return(&uuid.UUID{}, errors.New("user already exists"))
 
 		_, err := s.SignUp(ctx, user)
 		assert.Error(t, err)

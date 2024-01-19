@@ -12,9 +12,11 @@ import (
 	"github.com/thestoicway/user_service/internal/usr/model"
 	"github.com/thestoicway/user_service/internal/usr/service"
 	"go.uber.org/mock/gomock"
+	"go.uber.org/zap/zaptest"
 )
 
 func TestSignUp(t *testing.T) {
+	t.Parallel()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -26,12 +28,8 @@ func TestSignUp(t *testing.T) {
 		Database:   mockDatabase,
 		JwtManager: mockJwtManager,
 		Session:    mockSession,
+		Logger:     zaptest.NewLogger(t).Sugar(),
 	})
-
-	user := &model.User{
-		Email:    "test@example.com",
-		Password: "password",
-	}
 
 	ctx := context.Background()
 
@@ -40,19 +38,31 @@ func TestSignUp(t *testing.T) {
 		mockJwtManager.EXPECT().GenerateTokenPair(gomock.Any()).Return(&jsonwebtoken.TokenPair{}, &jsonwebtoken.AdditionalInfo{}, nil)
 		mockSession.EXPECT().AddSession(gomock.Any(), gomock.Any()).Return(nil)
 
+		user := &model.User{
+			Email:    "test@example.com",
+			Password: "password",
+		}
+
 		_, err := s.SignUp(ctx, user)
 		assert.NoError(t, err)
 	})
 
 	t.Run("error when generating password hash", func(t *testing.T) {
-		user.Password = string(make([]byte, 1001)) // bcrypt can handle up to 72 bytes
+		user := &model.User{
+			Email:    "test@example.com",
+			Password: string(make([]byte, 1001)), // bcrypt can handle up to 72 bytes
+		}
 
 		_, err := s.SignUp(ctx, user)
 		assert.Error(t, err)
 	})
 
 	t.Run("error when inserting user into the database", func(t *testing.T) {
-		user.Password = "password"
+		user := &model.User{
+			Email:    "test@example.com",
+			Password: "password",
+		}
+
 		mockDatabase.EXPECT().InsertUser(gomock.Any(), gomock.Any()).Return(&uuid.UUID{}, errors.New("database error"))
 
 		_, err := s.SignUp(ctx, user)
@@ -63,6 +73,10 @@ func TestSignUp(t *testing.T) {
 		mockDatabase.EXPECT().InsertUser(gomock.Any(), gomock.Any()).Return(&uuid.UUID{}, nil)
 		mockJwtManager.EXPECT().GenerateTokenPair(gomock.Any()).Return(nil, nil, errors.New("token error"))
 
+		user := &model.User{
+			Email:    "test@example.com",
+			Password: "password",
+		}
 		_, err := s.SignUp(ctx, user)
 		assert.Error(t, err)
 	})
@@ -72,12 +86,22 @@ func TestSignUp(t *testing.T) {
 		mockJwtManager.EXPECT().GenerateTokenPair(gomock.Any()).Return(&jsonwebtoken.TokenPair{}, &jsonwebtoken.AdditionalInfo{}, nil)
 		mockSession.EXPECT().AddSession(gomock.Any(), gomock.Any()).Return(errors.New("session error"))
 
+		user := &model.User{
+			Email:    "test@example.com",
+			Password: "password",
+		}
+
 		_, err := s.SignUp(ctx, user)
 		assert.Error(t, err)
 	})
 
 	t.Run("error when user already exists", func(t *testing.T) {
 		mockDatabase.EXPECT().InsertUser(gomock.Any(), gomock.Any()).Return(&uuid.UUID{}, errors.New("user already exists"))
+
+		user := &model.User{
+			Email:    "test@example.com",
+			Password: "password",
+		}
 
 		_, err := s.SignUp(ctx, user)
 		assert.Error(t, err)

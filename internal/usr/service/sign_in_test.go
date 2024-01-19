@@ -53,10 +53,12 @@ func TestSignIn(t *testing.T) {
 
 		_, err := userService.SignIn(ctx, user)
 
-		if err, ok := err.(*customerrors.CustomError); ok {
-			assert.Equal(t, err.Code, customerrors.ErrWrongCredentials)
+		var customError *customerrors.CustomError
+
+		if errors.As(err, &customError) {
+			assert.Equal(t, customError.Code, customerrors.ErrWrongCredentials)
 		} else {
-			assert.Fail(t, "error is not of type WrongCredentialsError")
+			assert.Fail(t, "expected custom error")
 		}
 	})
 

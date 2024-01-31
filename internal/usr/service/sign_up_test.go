@@ -22,7 +22,7 @@ func TestSignUp(t *testing.T) {
 
 	mockDatabase := mocks.NewMockUserDatabase(ctrl)
 	mockJwtManager := mocks.NewMockJwtManager(ctrl)
-	mockSession := mocks.NewMockSessionDatabase(ctrl)
+	mockSession := mocks.NewMocksessionstorage(ctrl)
 
 	s := service.NewUserService(&service.UserServiceParams{
 		Database:   mockDatabase,

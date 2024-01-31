@@ -21,7 +21,7 @@ func TestSignIn(t *testing.T) {
 
 	mockDatabase := mocks.NewMockUserDatabase(mockCtrl)
 	mockJwtManager := mocks.NewMockJwtManager(mockCtrl)
-	mockSession := mocks.NewMockSessionDatabase(mockCtrl)
+	mockSession := mocks.NewMocksessionstorage(mockCtrl)
 
 	userService := service.NewUserService(
 		&service.UserServiceParams{

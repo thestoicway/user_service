@@ -3,9 +3,10 @@ package service_test
 import (
 	"context"
 	"errors"
+	"testing"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/thestoicway/user_service/internal/usr/jsonwebtoken"
-	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/thestoicway/user_service/internal/usr/mocks"
@@ -19,7 +20,7 @@ func TestSignOut(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	mockJwtManager := mocks.NewMockJwtManager(mockCtrl)
-	mockSession := mocks.NewMockSessionDatabase(mockCtrl)
+	mockSession := mocks.NewMocksessionstorage(mockCtrl)
 
 	userService := service.NewUserService(
 		&service.UserServiceParams{

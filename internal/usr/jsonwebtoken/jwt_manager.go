@@ -128,6 +128,10 @@ func (manager *jwtManagerImpl) DecodeToken(token string) (claims *CustomClaims, 
 		return nil, customerrors.NewUnauthorizedError(err)
 	}
 
+	if err != nil {
+		return nil, customerrors.NewUnauthorizedError(err)
+	}
+
 	// Assert that the claims in the token are of type *CustomClaims
 	claims, ok := decodedToken.Claims.(*CustomClaims)
 
@@ -139,6 +143,11 @@ func (manager *jwtManagerImpl) DecodeToken(token string) (claims *CustomClaims, 
 	// Check if the duration between the issued time and the expiry time of the token is correct
 	if claims.ExpiresAt.Sub(claims.IssuedAt.Time) != refreshTokenDuration {
 		return nil, customerrors.NewUnauthorizedError(errors.New("token duration is not correct"))
+	}
+
+	// Check if the token has expired
+	if claims.ExpiresAt.Time.Before(time.Now()) {
+		return nil, customerrors.NewUnauthorizedError(errors.New("token has expired"))
 	}
 
 	// If everything is ok, return the claims in the token

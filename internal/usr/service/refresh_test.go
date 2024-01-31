@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/thestoicway/user_service/internal/usr/jsonwebtoken"
 	"github.com/thestoicway/user_service/internal/usr/model"
@@ -15,19 +16,16 @@ import (
 )
 
 func TestRefresh(t *testing.T) {
-
 	t.Run("refreshes token pair", func(t *testing.T) {
 		t.Parallel()
 
-		oldSession := &model.Session{
-			JwtID:          "old-jwt-id",
-			RefreshToken:   "refresh-token",
-			ExpirationTime: time.Duration(1) * time.Hour,
-		}
+		jwtManager := jsonwebtoken.NewJwtManager(zaptest.NewLogger(t).Sugar(), "secret")
 
-		newSession := &model.Session{
-			JwtID:          "new-jwt-id",
-			RefreshToken:   "new-refresh-token",
+		oldJwt, info, _ := jwtManager.GenerateTokenPair(uuid.New())
+
+		oldSession := &model.Session{
+			JwtID:          info.RefreshTokenID,
+			RefreshToken:   oldJwt.RefreshToken,
 			ExpirationTime: time.Duration(1) * time.Hour,
 		}
 
@@ -37,8 +35,6 @@ func TestRefresh(t *testing.T) {
 				oldSession.JwtID: oldSession,
 			},
 		})
-
-		jwtManager := jsonwebtoken.NewJwtManager(zaptest.NewLogger(t).Sugar(), "secret")
 
 		// Create a new user service with the session storage.
 		userService := service.NewUserService(&service.UserServiceParams{
@@ -54,7 +50,27 @@ func TestRefresh(t *testing.T) {
 
 		if assert.NoError(t, err) {
 			// Check that the new refresh token is the same as the one in the new session.
-			assert.Equal(t, newSession.RefreshToken, tokenPair.RefreshToken)
+			assert.NotEqual(t, tokenPair.RefreshToken, oldJwt.RefreshToken)
 		}
+	})
+
+	t.Run("returns error when refresh token is invalid", func(t *testing.T) {
+		t.Parallel()
+
+		// Setup
+		jwtManager := jsonwebtoken.NewJwtManager(zaptest.NewLogger(t).Sugar(), "secret")
+		sStorage := sessionstorage.NewInMemoryDatabase(&sessionstorage.InMemoryDatabaseParams{})
+		userService := service.NewUserService(&service.UserServiceParams{
+			Logger:     zap.NewNop().Sugar(),
+			JwtManager: jwtManager,
+			Database:   nil,
+			Session:    sStorage,
+		})
+
+		// Call Refresh with an invalid token
+		_, err := userService.Refresh(context.Background(), "invalid_token")
+
+		// Assert
+		assert.Error(t, err)
 	})
 }

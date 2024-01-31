@@ -21,7 +21,7 @@ func TestSignIn(t *testing.T) {
 
 	mockDatabase := mocks.NewMockUserDatabase(mockCtrl)
 	mockJwtManager := mocks.NewMockJwtManager(mockCtrl)
-	mockSession := mocks.NewMockSessionDatabase(mockCtrl)
+	mockSession := mocks.NewMocksessionstorage(mockCtrl)
 
 	userService := service.NewUserService(
 		&service.UserServiceParams{
@@ -52,11 +52,13 @@ func TestSignIn(t *testing.T) {
 		}, nil)
 
 		_, err := userService.SignIn(ctx, user)
+    
+		var customError *customerrors.CustomError
 
-		if err, ok := err.(*customerrors.CustomError); ok {
-			assert.Equal(t, err.Code, customerrors.ErrWrongCredentials)
+		if errors.As(err, &customError) {
+			assert.Equal(t, customError.Code, customerrors.ErrWrongCredentials)
 		} else {
-			assert.Fail(t, "error is not of type WrongCredentialsError")
+			assert.Fail(t, "expected custom error")
 		}
 	})
 

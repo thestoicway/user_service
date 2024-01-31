@@ -15,7 +15,7 @@ import (
 	"github.com/thestoicway/user_service/internal/usr/database"
 	"github.com/thestoicway/user_service/internal/usr/jsonwebtoken"
 	"github.com/thestoicway/user_service/internal/usr/service"
-	sessiondatabase "github.com/thestoicway/user_service/internal/usr/session_database"
+	sessionstorage "github.com/thestoicway/user_service/internal/usr/session_storage"
 	"go.uber.org/zap"
 )
 
@@ -31,7 +31,7 @@ func main() {
 	userDb := database.NewUserDatabase(logger.Named("userDatabase"), db)
 	jwtManager := jsonwebtoken.NewJwtManager(logger.Named("jwt_manager"), cfg.JwtSecret)
 	redisClient := createRedisClient(cfg)
-	session := sessiondatabase.NewRedisDatabase(logger.Named("sessionDatabase"), redisClient)
+	session := sessionstorage.NewRedisDatabase(logger.Named("sessionstorage"), redisClient)
 
 	userService := createUserService(logger.Named("userService"), cfg, userDb, jwtManager, session)
 	userHandler := api.NewUserHandler(logger.Named("userHandler"), userService)
@@ -74,7 +74,7 @@ func createRedisClient(cfg *config.Config) *redis.Client {
 	})
 }
 
-func createUserService(logger *zap.SugaredLogger, cfg *config.Config, userDb database.UserDatabase, jwtManager jsonwebtoken.JwtManager, session sessiondatabase.SessionDatabase) service.UserService {
+func createUserService(logger *zap.SugaredLogger, cfg *config.Config, userDb database.UserDatabase, jwtManager jsonwebtoken.JwtManager, session sessionstorage.SessionStorage) service.UserService {
 	userSvcParams := &service.UserServiceParams{
 		Logger:     logger,
 		Database:   userDb,

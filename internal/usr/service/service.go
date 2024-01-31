@@ -6,7 +6,7 @@ import (
 	"github.com/thestoicway/user_service/internal/usr/database"
 	"github.com/thestoicway/user_service/internal/usr/jsonwebtoken"
 	"github.com/thestoicway/user_service/internal/usr/model"
-	sessiondatabase "github.com/thestoicway/user_service/internal/usr/session_database"
+	sessionstorage "github.com/thestoicway/user_service/internal/usr/session_storage"
 	"go.uber.org/zap"
 )
 
@@ -25,7 +25,7 @@ type UserServiceParams struct {
 	Logger     *zap.SugaredLogger
 	Database   database.UserDatabase
 	JwtManager jsonwebtoken.JwtManager
-	Session    sessiondatabase.SessionDatabase
+	Session    sessionstorage.SessionStorage
 }
 
 func NewUserService(p *UserServiceParams) UserService {

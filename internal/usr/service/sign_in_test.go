@@ -52,7 +52,7 @@ func TestSignIn(t *testing.T) {
 		}, nil)
 
 		_, err := userService.SignIn(ctx, user)
-
+    
 		var customError *customerrors.CustomError
 
 		if errors.As(err, &customError) {

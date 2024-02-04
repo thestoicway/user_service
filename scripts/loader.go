@@ -6,11 +6,12 @@ import (
 	"os"
 
 	"ariga.io/atlas-provider-gorm/gormschema"
-	"github.com/thestoicway/user_service/internal/usr/model"
+	profile "github.com/thestoicway/user_service/internal/profile/model"
+	usr "github.com/thestoicway/user_service/internal/usr/model"
 )
 
 func main() {
-	stmts, err := gormschema.New("postgres").Load(&model.UserDB{})
+	stmts, err := gormschema.New("postgres").Load(&usr.UserDB{}, &profile.ProfileDB{})
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to load gorm schema: %v\n", err)

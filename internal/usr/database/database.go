@@ -2,13 +2,10 @@ package database
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/thestoicway/user_service/internal/config"
 	"github.com/thestoicway/user_service/internal/usr/model"
 	"go.uber.org/zap"
-	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -27,25 +24,4 @@ func NewUserDatabase(logger *zap.SugaredLogger, db *gorm.DB) UserDatabase {
 		logger: logger,
 		db:     db,
 	}
-}
-
-func OpenDB(config *config.Config) (*gorm.DB, error) {
-	// "host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=disable"
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable",
-		config.PostgresDatabase.PostgresHost,
-		config.PostgresDatabase.PostgresUser,
-		config.PostgresDatabase.PostgresPass,
-		config.PostgresDatabase.PostgresDB,
-		config.PostgresDatabase.PostgresPort,
-	)
-
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		TranslateError: true,
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	return db, err
 }

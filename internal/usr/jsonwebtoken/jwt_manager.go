@@ -141,9 +141,10 @@ func (manager *jwtManagerImpl) DecodeToken(token string) (claims *CustomClaims, 
 	}
 
 	// Check if the duration between the issued time and the expiry time of the token is correct
-	if claims.ExpiresAt.Sub(claims.IssuedAt.Time) != refreshTokenDuration {
-		return nil, customerrors.NewUnauthorizedError(errors.New("token duration is not correct"))
-	}
+	// TODO: fix this as it is needed for the refresh token not for the access token
+	// if claims.ExpiresAt.Sub(claims.IssuedAt.Time) != refreshTokenDuration {
+	// 	return nil, customerrors.NewUnauthorizedError(errors.New("token duration is not correct"))
+	// }
 
 	// Check if the token has expired
 	if claims.ExpiresAt.Time.Before(time.Now()) {
